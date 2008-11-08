@@ -78,7 +78,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-xcopy "$(ProjectDir)Resources" "$(TargetDir)Resources"  /E /F /H /Q /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)Resources" "$(TargetDir)Resources" /E /F /H /Q /Y /I</PostBuildEvent>
   </PropertyGroup>
 </Project>
