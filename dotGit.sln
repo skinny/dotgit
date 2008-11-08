@@ -1,0 +1,54 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{5419D232-BC39-4DF6-A444-C65BCC1E6504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotGit", "dotGit\dotGit.csproj", "{3A17B548-0F21-4A0D-A823-A96BDE0A7523}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{EB259CFB-73EF-4024-B455-962325D6F37A}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\zlib.net.dll = Lib\zlib.net.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{581981F8-3F1C-45A0-BA60-B1D864ACF702}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\NUnit\nunit.core.dll = Lib\NUnit\nunit.core.dll
+		Lib\NUnit\nunit.framework.dll = Lib\NUnit\nunit.framework.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E700CA68-54EA-491C-A840-6AABD0B4B2C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{1430006A-CE53-4B01-B44D-C40B0E8F74B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{8809D17B-187D-4EC9-AF0C-7149B39D3751}"
+	ProjectSection(SolutionItems) = preProject
+		README.markdown = README.markdown
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5419D232-BC39-4DF6-A444-C65BCC1E6504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5419D232-BC39-4DF6-A444-C65BCC1E6504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5419D232-BC39-4DF6-A444-C65BCC1E6504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5419D232-BC39-4DF6-A444-C65BCC1E6504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A17B548-0F21-4A0D-A823-A96BDE0A7523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A17B548-0F21-4A0D-A823-A96BDE0A7523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A17B548-0F21-4A0D-A823-A96BDE0A7523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A17B548-0F21-4A0D-A823-A96BDE0A7523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1430006A-CE53-4B01-B44D-C40B0E8F74B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1430006A-CE53-4B01-B44D-C40B0E8F74B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1430006A-CE53-4B01-B44D-C40B0E8F74B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1430006A-CE53-4B01-B44D-C40B0E8F74B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5419D232-BC39-4DF6-A444-C65BCC1E6504} = {E700CA68-54EA-491C-A840-6AABD0B4B2C0}
+		{1430006A-CE53-4B01-B44D-C40B0E8F74B4} = {E700CA68-54EA-491C-A840-6AABD0B4B2C0}
+		{581981F8-3F1C-45A0-BA60-B1D864ACF702} = {EB259CFB-73EF-4024-B455-962325D6F37A}
+	EndGlobalSection
+EndGlobal
