@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
+using IO = System.IO;
 using dotGit.Exceptions;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.InteropServices;
 
 
-namespace dotGit.Objects.Pack
+namespace dotGit.Objects.Storage
 {
 	public class Pack
 	{
@@ -19,10 +20,12 @@ namespace dotGit.Objects.Pack
 
 		internal Pack(string path)
 		{
-			Path = path.TrimEnd('/', '\\');
+			Path = path.TrimEnd(IO.Path.DirectorySeparatorChar);
 
 			CheckIndexFile();
-			CheckPackFile();
+
+			if(Version == 2)
+				CheckPackFile();
 		}
 
 		public static Pack LoadPack(string path)
@@ -64,13 +67,13 @@ namespace dotGit.Objects.Pack
 			byte[] version = new byte[4];
 			byte[] numberOfObjects = new byte[4];
 
-			using (FileStream fs = new FileStream(PackFilePath, FileMode.Open, FileAccess.Read))
+			using (IO.FileStream fs = new IO.FileStream(PackFilePath, IO.FileMode.Open, IO.FileAccess.Read))
 			{
 				fs.Read(header, 0, 4);
 				fs.Read(version, 0, 4);
 				fs.Read(numberOfObjects, 0, 4);
 			}
-
+			
 			NumberOfObjects = numberOfObjects.Sum(b => b);
 
 			if (!VERSIONS.Contains(Version))
@@ -85,7 +88,7 @@ namespace dotGit.Objects.Pack
 			byte[] magicNumber = new byte[4];
 			byte[] version = new byte[4];
 
-			using (FileStream fs = new FileStream(IndexFilePath, FileMode.Open, FileAccess.Read))
+			using (IO.FileStream fs = new IO.FileStream(IndexFilePath, IO.FileMode.Open, IO.FileAccess.Read))
 			{
 				fs.Read(magicNumber, 0, 4);
 				fs.Read(version, 0, 4);

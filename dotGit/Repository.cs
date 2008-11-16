@@ -6,6 +6,8 @@ using System.IO;
 using dotGit.Exceptions;
 using System.Text.RegularExpressions;
 using System.Security.AccessControl;
+using dotGit.Objects.Storage;
+using dotGit.Generic;
 
 namespace dotGit
 {
@@ -15,7 +17,9 @@ namespace dotGit
 	public class Repository
 	{
 		#region Fields
+
 		private Ref _head = null;
+		private ObjectStorage _storage = null;
 
 		#endregion
 
@@ -41,8 +45,14 @@ namespace dotGit
 			}
 			else
 				throw new RepositoryNotFoundException("'{0}' could not be opened as a git repository");
+
+			LoadStorage();
 		}
 
+		/// <summary>
+		/// Defaults the autoInit parameter of the other overload to false
+		/// </summary>
+		/// <param name="path"></param>
 		private Repository(string path)
 			: this(path, false)
 		{ }
@@ -75,6 +85,12 @@ namespace dotGit
 			HEAD = new Branch(this, headContents.Split(' ').Last().Replace('/', Path.DirectorySeparatorChar).Trim());
 		}
 
+		private void LoadStorage()
+		{
+			_storage = new ObjectStorage(this);
+		}
+
+
 		#endregion Constructors / Factory methods
 
 		#region Properties
@@ -94,7 +110,7 @@ namespace dotGit
 			}
 		}
 
-		public List<Branch> Branches
+		public InternalWritableList<Branch> Branches
 		{
 			get;
 			private set;
@@ -124,6 +140,18 @@ namespace dotGit
 		{
 			get;
 			private set;
+		}
+
+		public ObjectStorage Storage
+		{
+			get
+			{
+				return _storage;
+			}
+			private set
+			{
+				_storage = value;
+			}
 		}
 
 		#endregion

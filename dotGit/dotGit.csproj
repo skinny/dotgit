@@ -36,24 +36,33 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, PublicKeyToken=47d7877cb3620160">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\zlib.net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="Exceptions\PackFileException.cs" />
     <Compile Include="Exceptions\RefParseException.cs" />
+    <Compile Include="Generic\GitObjectStream.cs" />
+    <Compile Include="Generic\InternalWritableList.cs" />
+    <Compile Include="Generic\Sha.cs" />
+    <Compile Include="Generic\Zlib.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="Objects\Blob.cs" />
     <Compile Include="Objects\Commit.cs" />
     <Compile Include="Objects\GitObject.cs" />
     <Compile Include="Objects\NodeCollection.cs" />
-    <Compile Include="Objects\Pack\Deltified.cs" />
-    <Compile Include="Objects\Pack\Pack.cs" />
-    <Compile Include="Objects\Pack\PackObject.cs" />
-    <Compile Include="Objects\Pack\PackObjectCollection.cs" />
-    <Compile Include="Objects\Pack\Undeltified.cs" />
+    <Compile Include="Objects\Storage\Deltified.cs" />
+    <Compile Include="Objects\Storage\ObjectStorage.cs" />
+    <Compile Include="Objects\Storage\Pack.cs" />
+    <Compile Include="Objects\Storage\PackObject.cs" />
+    <Compile Include="Objects\Storage\PackObjectCollection.cs" />
+    <Compile Include="Objects\Storage\Undeltified.cs" />
+    <Compile Include="Contributer.cs" />
     <Compile Include="Refs\Branch.cs" />
     <Compile Include="Exceptions\RepositoryNotFoundException.cs" />
     <Compile Include="Objects\Node.cs" />
@@ -62,7 +71,7 @@
     <Compile Include="Refs\Tag.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Objects\Tree.cs" />
-    <Compile Include="Utility.cs" />
+    <Compile Include="Generic\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />

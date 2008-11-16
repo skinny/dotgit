@@ -3,26 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
+using System.IO;
+using dotGit.Generic;
 
 namespace dotGit.Objects
 {
 	public class Blob : Node
 	{
-		internal Blob(Repository repo, string sha)
-			: base(repo, sha)
+		internal Blob(Repository repo)
+			: base(repo)
 		{ }
 
-		public byte[] Data
+		internal Blob(Repository repo, string sha)
+			:base(repo, sha)
+		{ }
+
+		public override void Deserialize(byte[] contents)
 		{
-			get
+			if (String.IsNullOrEmpty(SHA))
+				SHA = Sha.Compute(contents);
+
+			using (GitObjectStream stream = new GitObjectStream(contents))
 			{
-				return null;
+				//Skip header
+				stream.ReadToNull();
+
+				Content = stream.ReadToEnd();
 			}
-			internal set
-			{
-				//TODO
-				throw new NotImplementedException();
-			}
+		}
+
+		public override byte[] Serialize()
+		{
+			throw new NotImplementedException();
+		}
+
+		public byte[] Content
+		{
+			get;
+			private set;
 		}
 	}
 }

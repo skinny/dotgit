@@ -6,6 +6,7 @@ using NUnit.Framework;
 using dotGit;
 using System.IO;
 using System.Reflection;
+using dotGit.Generic;
 
 namespace Test
 {

@@ -4,34 +4,32 @@ using System.Linq;
 using System.Text;
 using dotGit;
 using System.Collections;
+using dotGit.Generic;
 
 namespace dotGit.Objects
 {
-	public class NodeCollection : IEnumerable<Node>
+	public class NodeCollection : InternalWritableList<Node>
 	{
-		private List<Node> _nodes = null;
+		public NodeCollection()
+			: base()
+		{ }
 
-		private NodeCollection() { }
-
-		internal NodeCollection(IEnumerable<Node> nodes)
+		public NodeCollection(int capacity)
+			:base(capacity)
 		{
-			_nodes = nodes.ToList<Node>();
+
 		}
 
-		internal void Add(Node node)
+		public Node this[string path]
 		{
-			_nodes.Add(node);
+			get
+			{
+				foreach (Node n in List)
+				{
+					
+				}
+				return null;
+			}
 		}
-
-		public IEnumerator<Node> GetEnumerator()
-		{
-			return _nodes.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _nodes.GetEnumerator();
-		}
-
 	}
 }

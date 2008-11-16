@@ -6,14 +6,48 @@ using System.Security.Cryptography;
 
 namespace dotGit.Objects
 {
-	public class Node : GitObject
+	public abstract class Node : GitObject
 	{
-		private Node() { }
+		internal Node(Repository repo)
+			:base(repo)
+		{	}
 
 		internal Node(Repository repo, string sha)
-			:base(repo, sha)
+			: base(repo, sha)
+		{ }
+
+		public string Path
 		{
-			
+			get;
+			internal set;
+		}
+
+		public string Mode
+		{
+			get;
+			internal set;
+		}
+
+		public Node Parent
+		{
+			get;
+			internal set;
+		}
+
+		public bool HasParent
+		{
+			get { return Parent != null; }
+		}
+
+
+		public bool IsTree
+		{
+			get { return this is Tree; }
+		}
+
+		public bool IsBlob
+		{
+			get { return this is Blob; }
 		}
 	}
 }

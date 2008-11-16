@@ -7,6 +7,7 @@ using dotGit.Exceptions;
 using IO = System.IO;
 using System.Text.RegularExpressions;
 using dotGit.Objects;
+using dotGit.Generic;
 
 
 namespace dotGit
@@ -22,7 +23,7 @@ namespace dotGit
 		internal Ref(Repository repo, string path)
 		{
 			Repo = repo;
-			_path = path;
+			Path = path;
 
 			ParseRef();
 		}
@@ -33,7 +34,7 @@ namespace dotGit
 			protected set;
 		}
 
-		public Repository Repo
+		protected Repository Repo
 		{
 			get;
 			private set;
@@ -74,12 +75,7 @@ namespace dotGit
 
 		private void ParseRef()
 		{
-			string fileContens = IO.File.ReadAllText(File.FullName).Trim();		
-			
-			if(!Utility.IsValidSHA(fileContens))
-				throw new RefParseException(File.FullName, fileContens);
-
-			Commit = new Commit(Repo, fileContens);
+			Commit = Repo.Storage.GetObject<Commit>(IO.File.ReadAllText(File.FullName).Trim());	
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace dotGit.Objects.Pack
+namespace dotGit.Objects.Storage
 {
 	public class PackObjectCollection : IEnumerable<PackObject>
 	{
