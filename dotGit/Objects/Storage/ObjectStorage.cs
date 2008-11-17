@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using dotGit.Exceptions;
 using dotGit.Generic;
+using dotGit.Refs;
 
 namespace dotGit.Objects.Storage
 {
@@ -65,7 +66,7 @@ namespace dotGit.Objects.Storage
 			{
 				byte[] contents = Zlib.Decompress(looseObjectPath);
 
-				return GitObject.LoadFromContent(Repo, contents, sha);
+				return LoadObjectFromContent(Repo, contents, sha);
 			}
 			else
 			{
@@ -80,6 +81,58 @@ namespace dotGit.Objects.Storage
 		public T GetObject<T>(string sha) where T : IStorableObject
 		{
 			return (T)GetObject(sha);
+		}
+
+		private static IStorableObject LoadObjectFromContent(Repository repo, byte[] uncomprContents, string sha)
+		{
+			long length;
+			string type;
+			using (GitObjectStream stream = new GitObjectStream(uncomprContents))
+			{
+				length = stream.ReadObjectHeader(out type);
+			}
+
+			bool haveSha = !String.IsNullOrEmpty(sha);
+
+			// If sha is passed we can forward it to the object so the SHA does not have to be calculated from the objects contents
+			if (haveSha && !Utility.IsValidSHA(sha))
+				throw new ArgumentException("Must have valid sha", "sha");
+
+			IStorableObject result;
+			switch (type)
+			{
+				case "commit":
+					if (haveSha)
+						result = new Commit(repo, sha);
+					else
+						result = new Commit(repo);
+					break;
+				case "tree":
+					if (haveSha)
+						result = new Tree(repo, sha);
+					else
+						result = new Tree(repo);
+					break;
+				case "blob":
+					if (haveSha)
+						result = new Blob(repo, sha);
+					else
+						result = new Blob(repo);
+					break;
+				case "tag":
+					if (haveSha)
+						result = new Tag(repo, sha);
+					else
+						result = new Tag(repo);
+					break;
+				default:
+					throw new ParseException(String.Format("Could not open object of type: {0}", type));
+			}
+
+			// Let the respective object type load itself from the object content
+			result.Deserialize(uncomprContents);
+
+			return result;
 		}
 
 	}
