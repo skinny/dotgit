@@ -19,17 +19,5 @@ namespace dotGit.Objects
 		{
 
 		}
-
-		public Node this[string path]
-		{
-			get
-			{
-				foreach (Node n in List)
-				{
-					
-				}
-				return null;
-			}
-		}
 	}
 }

@@ -5,10 +5,12 @@ using System.Text;
 using System.IO;
 using dotGit.Generic;
 using dotGit.Objects.Storage;
+using dotGit.Refs;
+using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
-	public abstract class GitObject
+	public abstract class GitObject : IStorableObject
 	{
 		private GitObject()
 		{ }
@@ -27,7 +29,7 @@ namespace dotGit.Objects
 			SHA = sha;
 		}
 
-		public static GitObject LoadFromContent(Repository repo, byte[] uncomprContents, string sha)
+		public static IStorableObject LoadFromContent(Repository repo, byte[] uncomprContents, string sha)
 		{
 			long length;
 			string type;
@@ -38,10 +40,11 @@ namespace dotGit.Objects
 
 			bool haveSha = !String.IsNullOrEmpty(sha);
 
+			// If sha is passed we can forward it to the object so the SHA does not have to be calculated from the objects contents
 			if (haveSha && !Utility.IsValidSHA(sha))
 				throw new ArgumentException("Must have valid sha", "sha");
 
-			GitObject result;
+			IStorableObject result;
 			switch (type)
 			{
 				case "commit":
@@ -62,21 +65,28 @@ namespace dotGit.Objects
 					else
 						result = new Blob(repo);
 					break;
+				case "tag":
+					if (haveSha)
+						result = new Tag(repo, sha);
+					else
+						result = new Tag(repo);
+					break;
 				default:
-					throw new TypeUnloadedException(String.Format("Could not open object of type: {0}", type));
+					throw new ParseException(String.Format("Could not open object of type: {0}", type));
 			}
 
+			// Let the respective object type load itself from the object content
 			result.Deserialize(uncomprContents);
 
 			return result;
 		}
 
-		public static GitObject LoadFromContent(Repository repo, byte[] uncomprContents)
+		public static IStorableObject LoadFromContent(Repository repo, byte[] uncomprContents)
 		{
 			return LoadFromContent(repo, uncomprContents, null);
 		}
 
-		public static T LoadFromContent<T>(Repository repo, byte[] uncomprContents) where T : GitObject
+		public static T LoadFromContent<T>(Repository repo, byte[] uncomprContents) where T : IStorableObject
 		{
 			return (T)LoadFromContent(repo, uncomprContents);
 		}
@@ -93,7 +103,7 @@ namespace dotGit.Objects
 		protected Repository Repo
 		{
 			get;
-			set;
+			private set;
 		}
 
 		public abstract void Deserialize(byte[] contents);

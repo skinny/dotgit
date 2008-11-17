@@ -49,35 +49,23 @@ namespace dotGit.Objects.Storage
 
 		private Repository Repo { get; set; }
 
-		public GitObject GetObject(string sha)
-		{
-			return GetObject(sha, Repo);
-		}
-
-		public T GetObject<T>(string sha) where T : GitObject
-		{
-			return (T)GetObject(sha);
-		}
-
 		/// <summary>
 		/// Find object in database and return it as an IStorableObject. Use the generic overload if you know the type up front
 		/// </summary>
 		/// <param name="sha">SHA object identifier</param>
-		/// <param name="repo">Reference to repository for easy path finding</param>
-		/// <returns></returns>
-		public static GitObject GetObject(string sha, Repository repo)
+		/// <returns>GitObject from </returns>
+		public IStorableObject GetObject(string sha)
 		{
 			if (!Utility.SHAExpression.IsMatch(sha))
 				throw new ArgumentException("Need a valid sha", "sha");
 
-			string gitObjectsDirectory = Path.Combine(repo.GitDir.FullName, "objects");
 
-			string looseObjectPath = Path.Combine(gitObjectsDirectory, Path.Combine(sha.Substring(0, 2), sha.Substring(2)));
+			string looseObjectPath = Path.Combine(ObjectsDir, Path.Combine(sha.Substring(0, 2), sha.Substring(2)));
 			if (File.Exists(looseObjectPath))
 			{
 				byte[] contents = Zlib.Decompress(looseObjectPath);
 
-				return GitObject.LoadFromContent(repo, contents, sha);
+				return GitObject.LoadFromContent(Repo, contents, sha);
 			}
 			else
 			{
@@ -89,9 +77,10 @@ namespace dotGit.Objects.Storage
 			throw new ObjectNotFoundException(sha);
 		}
 
-		public static T GetObject<T>(string sha, Repository repo) where T : GitObject
+		public T GetObject<T>(string sha) where T : IStorableObject
 		{
-			return (T)GetObject(sha, repo);
+			return (T)GetObject(sha);
 		}
+
 	}
 }

@@ -11,5 +11,15 @@ namespace Test
 	{
 		public static string AssemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().FullName);
 
+		private static string _testRepositoryPath;
+		static Global()
+		{
+			 _testRepositoryPath = Path.Combine(Global.AssemblyDir, @"Resources\TestRepo");
+		}
+
+		public static string RestRepositoryPath
+		{
+			get { return _testRepositoryPath; }
+		}
 	}
 }

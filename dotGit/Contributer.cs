@@ -40,6 +40,11 @@ namespace dotGit
 			return new Contributer(name, email);
 		}
 
+		public override string ToString()
+		{
+			return String.Format("{0} <{1}>", Name, Email);
+		}
+
 		public string Name
 		{
 			get;

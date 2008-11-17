@@ -13,14 +13,12 @@ namespace Test
 	[TestFixture]
 	public class UtilityTest
 	{
-		private string _testRepositoryPath = null;
 		private string _fullTempTestRepoName = null;
 		private string _tempTestRepoName = @"Resources\UtilityTestTempRepoPath";
 
 		[SetUp]
 		public void Setup()
 		{
-			_testRepositoryPath = Path.Combine(Global.AssemblyDir, @"Resources\TestRepo");
 			_fullTempTestRepoName = Path.Combine(Global.AssemblyDir, _tempTestRepoName);
 
 			if (Directory.Exists(_fullTempTestRepoName))
@@ -48,7 +46,7 @@ namespace Test
 		public void IsGitRepositoryShouldReturnTrueOnValidPath()
 		{
 			DirectoryInfo gitDir;
-			Assert.IsTrue(Utility.IsGitRepository(_testRepositoryPath, out gitDir), "IsGitRepository must return true for a valid path to a Git repository");
+			Assert.IsTrue(Utility.IsGitRepository(Global.RestRepositoryPath, out gitDir), "IsGitRepository must return true for a valid path to a Git repository");
 			Assert.IsTrue(gitDir != null && gitDir.Exists, "IsGitRepository cannot return dir as null when true was returned");
 		}
 

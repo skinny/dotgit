@@ -16,12 +16,12 @@ namespace dotGit.Objects
 		private Commit _parent = null;
 
 		internal Commit(Repository repo)
-			:base(repo)
+			: base(repo)
 		{ }
 
 		internal Commit(Repository repo, string sha)
-			:base(repo, sha)
-		{	}
+			: base(repo, sha)
+		{ }
 
 		public string Message
 		{
@@ -35,7 +35,7 @@ namespace dotGit.Objects
 			{
 				if (_tree != null) return _tree;
 
-				if(!String.IsNullOrEmpty(_treeSha))
+				if (!String.IsNullOrEmpty(_treeSha))
 					_tree = Repo.Storage.GetObject<Tree>(_treeSha);
 
 				return _tree;
@@ -50,12 +50,20 @@ namespace dotGit.Objects
 		{
 			get
 			{
+				if (_parent == null && !String.IsNullOrEmpty(_parentSha))
+					_parent = Repo.Storage.GetObject<Commit>(_parentSha);
+
 				return _parent;
 			}
 			private set
 			{
 				_parent = value;
 			}
+		}
+
+		public bool HasParent
+		{
+			get { return Parent != null; }
 		}
 
 		public Contributer Committer
@@ -84,7 +92,7 @@ namespace dotGit.Objects
 
 		public override void Deserialize(byte[] contents)
 		{
-			if(String.IsNullOrEmpty(SHA))
+			if (String.IsNullOrEmpty(SHA))
 				SHA = Sha.Compute(contents);
 
 			using (GitObjectStream stream = new GitObjectStream(contents))
@@ -113,6 +121,7 @@ namespace dotGit.Objects
 				Author = Contributer.Parse(authorLine);
 
 				// Committer
+				stream.ReadWord();
 				string committerLine = Encoding.UTF8.GetString(stream.ReadLine());
 				CommittedDate = Utility.StripDate(committerLine, out committerLine);
 				Committer = Contributer.Parse(committerLine);

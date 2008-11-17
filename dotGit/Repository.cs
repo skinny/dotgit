@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using dotGit.Objects.Storage;
 using dotGit.Generic;
+using dotGit.Refs;
 
 namespace dotGit
 {
@@ -18,8 +19,10 @@ namespace dotGit
 	{
 		#region Fields
 
-		private Ref _head = null;
+		private Head _head = null;
 		private ObjectStorage _storage = null;
+		private RefCollection<Branch> _branches = null;
+		private RefCollection<Tag> _tags = null;
 
 		#endregion
 
@@ -79,10 +82,32 @@ namespace dotGit
 
 		private void LoadHead()
 		{
-			string headContents = File.ReadAllText(Path.Combine(GitDir.FullName, @"HEAD"));
+			_head = new Head(this);
+		}
 
-			//TODO: Check for type type in HEAD file and load either a Tag or Branch object
-			HEAD = new Branch(this, headContents.Split(' ').Last().Replace('/', Path.DirectorySeparatorChar).Trim());
+
+		private void LoadBranches()
+		{
+			string[] branches = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\heads"));
+
+			_branches = new RefCollection<Branch>(branches.Length);
+
+			foreach (string file in branches)
+			{
+				_branches.Add(new Branch(this, Path.Combine(@"refs\heads", Path.GetFileName(file))));
+			}
+		}
+
+		private void LoadTags()
+		{
+			string[] tags = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\tags"));
+
+			_tags = new RefCollection<Tag>(tags.Length);
+
+			foreach (string file in tags)
+			{
+				_tags.Add(Tag.GetTag(this, Path.Combine(@"refs\tags", Path.GetFileName(file))));
+			}
 		}
 
 		private void LoadStorage()
@@ -95,7 +120,7 @@ namespace dotGit
 
 		#region Properties
 
-		public Ref HEAD
+		public Head HEAD
 		{
 			get
 			{
@@ -104,16 +129,28 @@ namespace dotGit
 
 				return _head;
 			}
-			private set
+		}
+
+		public RefCollection<Branch> Branches
+		{
+			get
 			{
-				_head = value;
+				if (_branches == null)
+					LoadBranches();
+
+				return _branches;
 			}
 		}
 
-		public InternalWritableList<Branch> Branches
+		public RefCollection<Tag> Tags
 		{
-			get;
-			private set;
+			get
+			{
+				if (_tags == null)
+					LoadTags();
+
+				return _tags;
+			}
 		}
 
 		public Index Index

@@ -10,7 +10,7 @@ using dotGit.Objects;
 using dotGit.Generic;
 
 
-namespace dotGit
+namespace dotGit.Refs
 {
 	/// <summary>
 	/// Represents a reference to a commit
@@ -20,18 +20,15 @@ namespace dotGit
 		private string _path = null;
 		private FileInfo _file = null;
 
-		internal Ref(Repository repo, string path)
+		protected Ref(Repository repo)
 		{
 			Repo = repo;
-			Path = path;
-
-			ParseRef();
 		}
 
-		public Commit Commit
+		protected Ref(Repository repo, string path)
+			: this(repo)
 		{
-			get;
-			protected set;
+			Path = path;
 		}
 
 		protected Repository Repo
@@ -40,7 +37,10 @@ namespace dotGit
 			private set;
 		}
 
-		protected string Path
+		/// <summary>
+		/// Relative path to ref file in GITDIR
+		/// </summary>
+		public string Path
 		{
 			get { return _path; }
 			set
@@ -53,29 +53,35 @@ namespace dotGit
 			}
 		}
 
-		public override string ToString()
+		/// <summary>
+		/// The name of this REF
+		/// </summary>
+		public string Name
 		{
-			return Commit.SHA;
+			get
+			{
+				return File.Name;
+			}
 		}
 
-		protected FileInfo File
+		public FileInfo File
 		{
 			get
 			{
 				if (_file != null) return _file;
 
-				if (IO.File.Exists(IO.Path.Combine(Repo.GitDir.FullName, Path)))
-					_file = new FileInfo(IO.Path.Combine(Repo.GitDir.FullName, Path));
-				else
-					throw new FileNotFoundException(String.Format("Could not find ref file '{0}'", Path));
-
+				_file = GetRefFile(Repo, Path);
+				
 				return _file;
 			}
 		}
 
-		private void ParseRef()
+		protected static FileInfo GetRefFile(Repository repo, string path)
 		{
-			Commit = Repo.Storage.GetObject<Commit>(IO.File.ReadAllText(File.FullName).Trim());	
+			if (IO.File.Exists(IO.Path.Combine(repo.GitDir.FullName, path)))
+				return new FileInfo(IO.Path.Combine(repo.GitDir.FullName, path));
+			else
+				throw new FileNotFoundException(String.Format("Could not find ref file '{0}'", path));
 		}
 	}
 }

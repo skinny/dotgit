@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace dotGit.Generic
 {
 	public class Utility
 	{
 		public static readonly Regex TrailingDotGitExpression = new Regex(@"\.git\/?\Z");
-		public static readonly Regex SHAExpression = new Regex(@"([a-f]|\d){40}");
+		public static readonly Regex SHAExpression = new Regex(@"^([a-f]|\d){40}\Z");
 		public static readonly Regex DateTimeRegex = new Regex(@"\s(\d)+(\s(\+|-)(\d){4})?\Z");
 		public static readonly DateTime UnixEPOCH = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		public static readonly Regex ContributorRegex = new Regex(@"\s\<[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})\>");
-
 
 		/// <summary>
 		/// Verifies dir is, or contains a .git directory
@@ -68,6 +68,22 @@ namespace dotGit.Generic
 		public static bool IsValidSHA(string input)
 		{
 			return SHAExpression.IsMatch(input);
+		}
+
+		public static bool IsValidSHA(string input, out string sha)
+		{
+			Match m = SHAExpression.Match(input);
+
+			if (m.Success)
+			{
+				sha = m.Captures[0].Value;
+				return true;
+			}
+			else
+			{
+				sha = null;
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -201,13 +217,15 @@ namespace dotGit.Generic
 			{
 				string capture = match.Captures[0].Value;
 
+				
+
 				int timeZoneIndex = capture.IndexOfAny(new char[] { '+', '-' });
 				if (timeZoneIndex >= 0)
 				{
 					remainder = input.Substring(0, match.Index);
 
 					//Kind of nasty, but for now the only way I know of to parse the seconds offset Unix EPOCH with timezone offset
-					return DateTime.Parse(UnixEPOCH.AddSeconds(long.Parse(capture.Substring(0, timeZoneIndex))).ToString() + " " + capture.Substring(timeZoneIndex));			
+					return DateTime.Parse(UnixEPOCH.AddSeconds(long.Parse(capture.Substring(0, timeZoneIndex))).ToString(CultureInfo.CurrentCulture) + " " + capture.Substring(timeZoneIndex), CultureInfo.CurrentCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal);			
 				}
 			}
 			remainder = input;
