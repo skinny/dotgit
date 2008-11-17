@@ -56,7 +56,7 @@
     <Compile Include="Objects\Blob.cs" />
     <Compile Include="Objects\Commit.cs" />
     <Compile Include="Objects\GitObject.cs" />
-    <Compile Include="Objects\NodeCollection.cs" />
+    <Compile Include="Objects\TreeNodeCollection.cs" />
     <Compile Include="Objects\Storage\Deltified.cs" />
     <Compile Include="Objects\Storage\IStorableObject.cs" />
     <Compile Include="Objects\Storage\ObjectStorage.cs" />
@@ -67,7 +67,7 @@
     <Compile Include="Contributer.cs" />
     <Compile Include="Refs\Branch.cs" />
     <Compile Include="Exceptions\RepositoryNotFoundException.cs" />
-    <Compile Include="Objects\Node.cs" />
+    <Compile Include="Objects\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Refs\Head.cs" />
     <Compile Include="Refs\Ref.cs" />

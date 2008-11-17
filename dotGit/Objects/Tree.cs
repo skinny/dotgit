@@ -9,10 +9,10 @@ using dotGit.Objects.Storage;
 
 namespace dotGit.Objects
 {
-	public class Tree : Node
+	public class Tree : TreeNode
 	{
 		private byte[] _childrenRaw;
-		private NodeCollection _children;
+		private TreeNodeCollection _children;
 
 		internal Tree(Repository repo)
 			: base(repo)
@@ -22,7 +22,7 @@ namespace dotGit.Objects
 			: base(repo, sha)
 		{ }
 
-		public NodeCollection Children
+		public TreeNodeCollection Children
 		{
 			get
 			{
@@ -41,7 +41,7 @@ namespace dotGit.Objects
 
 		private void LoadChildren()
 		{
-			Children = new NodeCollection();
+			Children = new TreeNodeCollection();
 
 			using (GitObjectStream stream = new GitObjectStream(_childrenRaw))
 			{
@@ -53,7 +53,7 @@ namespace dotGit.Objects
 					path = Encoding.UTF8.GetString(stream.ReadToNull());
 					sha = Sha.Decode(stream.ReadBytes(20));
 
-					Node child = Repo.Storage.GetObject<Node>(sha);
+					TreeNode child = Repo.Storage.GetObject<TreeNode>(sha);
 					child.Path = path;
 					child.Mode = mode;
 					child.Parent = this;

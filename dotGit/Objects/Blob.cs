@@ -8,7 +8,7 @@ using dotGit.Generic;
 
 namespace dotGit.Objects
 {
-	public class Blob : Node
+	public class Blob : TreeNode
 	{
 		internal Blob(Repository repo)
 			: base(repo)

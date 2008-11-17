@@ -8,13 +8,13 @@ using dotGit.Generic;
 
 namespace dotGit.Objects
 {
-	public class NodeCollection : InternalWritableList<Node>
+	public class TreeNodeCollection : InternalWritableList<TreeNode>
 	{
-		public NodeCollection()
+		public TreeNodeCollection()
 			: base()
 		{ }
 
-		public NodeCollection(int capacity)
+		public TreeNodeCollection(int capacity)
 			:base(capacity)
 		{
 

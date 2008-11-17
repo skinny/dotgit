@@ -6,13 +6,13 @@ using System.Security.Cryptography;
 
 namespace dotGit.Objects
 {
-	public abstract class Node : GitObject
+	public abstract class TreeNode : GitObject
 	{
-		internal Node(Repository repo)
+		internal TreeNode(Repository repo)
 			:base(repo)
 		{	}
 
-		internal Node(Repository repo, string sha)
+		internal TreeNode(Repository repo, string sha)
 			: base(repo, sha)
 		{ }
 
@@ -28,7 +28,7 @@ namespace dotGit.Objects
 			internal set;
 		}
 
-		public Node Parent
+		public TreeNode Parent
 		{
 			get;
 			internal set;
