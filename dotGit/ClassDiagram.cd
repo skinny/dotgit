@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="dotGit.Objects.GitObject" Collapsed="true">
+    <Position X="3" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAABACBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\GitObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="dotGit.Objects.Blob" Collapsed="true">
+    <Position X="4.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAACBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Blob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Objects.TreeNode" Collapsed="true">
+    <Position X="3" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAIAAAAIAAAACQAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Objects\TreeNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Objects.Tree" Collapsed="true">
+    <Position X="2.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAgAAAAAAAAEAIAAACBABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Objects.Commit" Collapsed="true">
+    <Position X="5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAACCAEAAAgAACwAEQACBAAAAAAAAAIAAACAA=</HashCode>
+      <FileName>Objects\Commit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Refs.Ref" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAIAAAAAAAQBAAAEAAAAAAAAAACAEAA=</HashCode>
+      <FileName>Refs\Ref.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Refs.Branch" Collapsed="true">
+    <Position X="3" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Refs\Branch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Refs.Tag" Collapsed="true">
+    <Position X="5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAACABAAAAAgAACAACAAACBAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Refs\Tag.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="dotGit.Refs.Head" Collapsed="true">
+    <Position X="3.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEEAAAAAAAAAAAAAAAABAAAAAAgAAAAAAAAAAAQ=</HashCode>
+      <FileName>Refs\Head.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Repository" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAACCIAAKAAAAAggAAAIAACAAEAAAAECAAABgoA=</HashCode>
+      <FileName>Repository.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Contributer" Collapsed="true">
+    <Position X="7.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAACAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contributer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="dotGit.Objects.TreeNodeCollection" Collapsed="true">
+    <Position X="2" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\TreeNodeCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="dotGit.Objects.Storage.IStorableObject">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAACBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Storage\IStorableObject.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
