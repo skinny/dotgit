@@ -64,6 +64,9 @@ namespace dotGit.Refs
 			}
 		}
 
+		/// <summary>
+		/// The full path to ref's file
+		/// </summary>
 		public FileInfo File
 		{
 			get

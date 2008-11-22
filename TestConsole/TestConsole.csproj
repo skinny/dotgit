@@ -8,8 +8,8 @@
     <ProjectGuid>{5419D232-BC39-4DF6-A444-C65BCC1E6504}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Git.NET</RootNamespace>
-    <AssemblyName>Git.NET</AssemblyName>
+    <RootNamespace>TestConsole</RootNamespace>
+    <AssemblyName>TestConsole</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

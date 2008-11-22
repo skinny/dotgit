@@ -10,7 +10,6 @@ namespace dotGit.Refs
 {
 	public class Head
 	{
-		
 		private Commit _commit = null; // Will only be set if HEAD is detached
 
 		internal Head(Repository repo)

@@ -11,13 +11,17 @@ namespace dotGit.Objects.Storage
 {
 
 	/// <summary>
-	/// Gateway to all of Git's stored objects. Be it loose or packed
+	/// Gateway to all of Git's stored objects. Either loose or packed
 	/// </summary>
 	public class ObjectStorage
 	{
 		private ObjectStorage()
 		{ }
 
+		/// <summary>
+		/// Instantiates a new ObjectStorage object. It needs a reference to a repository object to operate
+		/// </summary>
+		/// <param name="repo">The repository to work with</param>
 		public ObjectStorage(Repository repo)
 		{
 			Repo = repo;
@@ -40,6 +44,9 @@ namespace dotGit.Objects.Storage
 			private set;
 		}
 
+		/// <summary>
+		/// The full path to repositories' objects directory
+		/// </summary>
 		public string ObjectsDir
 		{
 			get
@@ -62,8 +69,9 @@ namespace dotGit.Objects.Storage
 
 
 			string looseObjectPath = Path.Combine(ObjectsDir, Path.Combine(sha.Substring(0, 2), sha.Substring(2)));
+			// First check if object is stored in loose format
 			if (File.Exists(looseObjectPath))
-			{
+			{ // Object is stored loose. Inflate and load it from content
 				using (GitObjectReader reader = new GitObjectReader(Zlib.Decompress(looseObjectPath)))
 				{
 					return LoadObjectFromInflatedStream(Repo, reader, sha);
@@ -79,8 +87,15 @@ namespace dotGit.Objects.Storage
 			throw new ObjectNotFoundException(sha);
 		}
 
+		/// <summary>
+		/// Use this if you already know the objects type
+		/// </summary>
+		/// <typeparam name="T">The type of object to fetch from the db. IStorableObject must be implemented</typeparam>
+		/// <param name="sha"></param>
+		/// <returns></returns>
 		public T GetObject<T>(string sha) where T : IStorableObject
 		{
+			// For now we're just casting it to the given type
 			return (T)GetObject(sha);
 		}
 

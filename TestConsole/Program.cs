@@ -11,7 +11,7 @@ using dotGit.Objects.Storage;
 using dotGit.Refs;
 using dotGit.Index;
 
-namespace Git.NET
+namespace TestConsole
 {
 	class Program
 	{

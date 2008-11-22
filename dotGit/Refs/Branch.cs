@@ -11,6 +11,9 @@ using dotGit.Generic;
 
 namespace dotGit.Refs
 {
+	/// <summary>
+	/// The Branch class represents a branch in the git repository. It points to a certain commit
+	/// </summary>
 	public class Branch : Ref
 	{
 		internal Branch(Repository repo, string path)

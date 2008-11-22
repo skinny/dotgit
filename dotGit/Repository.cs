@@ -42,6 +42,7 @@ namespace dotGit
 			if (Utility.IsGitRepository(path, out gitDir))
 			{
 				GitDir = gitDir;
+				Console.WriteLine(String.Format("Opened git repository @ '{0}'".FormatWith(path)));
 			}
 			else if (autoInit)
 			{
@@ -50,8 +51,6 @@ namespace dotGit
 			}
 			else
 				throw new RepositoryNotFoundException("'{0}' could not be opened as a git repository");
-
-			LoadStorage();
 		}
 
 		/// <summary>
@@ -82,6 +81,9 @@ namespace dotGit
 			return new Repository(newRepositoryPath, true);
 		}
 
+		/// <summary>
+		/// Gets called from the Branches property getter for lazy loading
+		/// </summary>
 		private void LoadBranches()
 		{
 			string[] branches = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\heads"));
@@ -94,6 +96,9 @@ namespace dotGit
 			}
 		}
 
+		/// <summary>
+		/// Gets called from the Tags property getter for lazy loading
+		/// </summary>
 		private void LoadTags()
 		{
 			string[] tags = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\tags"));
@@ -106,6 +111,10 @@ namespace dotGit
 			}
 		}
 
+
+		/// <summary>
+		/// Gets called from the Storage property getter for lazy loading
+		/// </summary>
 		private void LoadStorage()
 		{
 			_storage = new ObjectStorage(this);
@@ -116,6 +125,10 @@ namespace dotGit
 
 		#region Properties
 
+
+		/// <summary>
+		/// The HEAD of the repository. If it's detached, the Branch property returns NULL
+		/// </summary>
 		public Head HEAD
 		{
 			get
@@ -127,6 +140,9 @@ namespace dotGit
 			}
 		}
 
+		/// <summary>
+		/// All branches in this repository
+		/// </summary>
 		public RefCollection<Branch> Branches
 		{
 			get
@@ -138,6 +154,10 @@ namespace dotGit
 			}
 		}
 
+
+		/// <summary>
+		/// All tags in this repository
+		/// </summary>
 		public RefCollection<Tag> Tags
 		{
 			get
@@ -149,6 +169,9 @@ namespace dotGit
 			}
 		}
 
+		/// <summary>
+		/// The Index of the repository. It's the staging area for changes to be committed and contains a cached tree of the current HEAD
+		/// </summary>
 		public IDX.Index Index
 		{
 			get
@@ -160,12 +183,9 @@ namespace dotGit
 			}
 		}
 
-		public string RepositoryPath
-		{
-			get;
-			private set;
-		}
-
+		/// <summary>
+		/// The working directory of this repository. If it's a 'bare' repository this property is of no use
+		/// </summary>
 		public DirectoryInfo RepositoryDir
 		{
 			get
@@ -174,21 +194,26 @@ namespace dotGit
 			}
 		}
 
+		/// <summary>
+		/// The git directory containing all the git stuff like the objects, HEAD, config and index
+		/// </summary>
 		public DirectoryInfo GitDir
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// All the objects(blobs, trees, commits and tags) are stored and retrieved from the ObjectStorage instance
+		/// </summary>
 		public ObjectStorage Storage
 		{
 			get
 			{
+				if (_storage == null)
+					LoadStorage();
+
 				return _storage;
-			}
-			private set
-			{
-				_storage = value;
 			}
 		}
 
