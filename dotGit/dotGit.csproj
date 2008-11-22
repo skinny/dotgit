@@ -58,6 +58,7 @@
     <Compile Include="Index\IndexTime.cs" />
     <Compile Include="Objects\Blob.cs" />
     <Compile Include="Objects\Commit.cs" />
+    <Compile Include="Objects\CommitCollection.cs" />
     <Compile Include="Objects\FileMode.cs" />
     <Compile Include="Objects\GitObject.cs" />
     <Compile Include="Objects\ObjectType.cs" />

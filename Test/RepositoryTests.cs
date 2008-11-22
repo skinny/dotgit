@@ -59,12 +59,13 @@ namespace Test
 			}
 		}
 
-		private Commit WalkHistory(Commit commit)
+		private void WalkHistory(Commit commit)
 		{
-			if (commit.HasParent)
-				return WalkHistory(commit.Parent);
-			else
-				return commit;
+			if (commit.HasParents)
+			{
+				foreach(Commit parent in commit.Parents)
+					WalkHistory(parent);
+			}
 		}
 
 	}

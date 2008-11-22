@@ -12,8 +12,8 @@ namespace dotGit.Objects
 		private string _treeSha = null;
 		private Tree _tree = null;
 
-		private string _parentSha = null;
-		private Commit _parent = null;
+		private List<string> _parentShas = null;
+		private CommitCollection _parents = null;
 
 		internal Commit(Repository repo)
 			: base(repo)
@@ -47,24 +47,28 @@ namespace dotGit.Objects
 		}
 
 		// TODO: This should be a collection of parents
-		public Commit Parent
+		public CommitCollection Parents
 		{
 			get
 			{
-				if (_parent == null && !String.IsNullOrEmpty(_parentSha))
-					_parent = Repo.Storage.GetObject<Commit>(_parentSha);
+				if (_parents == null && _parentShas.Count > 0)
+					LoadParents();
 
-				return _parent;
-			}
-			private set
-			{
-				_parent = value;
+				return _parents;
 			}
 		}
 
-		public bool HasParent
+		private void LoadParents()
 		{
-			get { return Parent != null; }
+			_parents = new CommitCollection();
+
+			foreach(string parentSha in _parentShas)
+				_parents.Add(Repo.Storage.GetObject<Commit>(parentSha));
+		}
+
+		public bool HasParents
+		{
+			get { return Parents != null && Parents.Count > 0; }
 		}
 
 		public Contributer Committer
@@ -108,16 +112,18 @@ namespace dotGit.Objects
 			input.ReadWord();
 			_treeSha = input.ReadLine().GetString();
 
+
 			// Check for 'parent' at beginning of line
+			_parentShas = new List<string>();
 			string parentOrAuthor = input.ReadWord().GetString();
 
 			// TODO: Make recursive
-			if (parentOrAuthor == "parent")
+			while (parentOrAuthor == "parent")
 			{
-				_parentSha = input.ReadLine().GetString();
+				_parentShas.Add(input.ReadLine().GetString());
 
 				// Skip 'author'
-				input.ReadWord();
+				parentOrAuthor = input.ReadWord().GetString();
 			}
 
 			// Author
