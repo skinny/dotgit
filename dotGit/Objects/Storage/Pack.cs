@@ -14,7 +14,7 @@ namespace dotGit.Objects.Storage
 	{
 		private static readonly string HEADER = "PACK";
 		private static readonly int[] VERSIONS = new int[] { 2 };
-		private static readonly string MAGIC_NUMBER = Encoding.UTF8.GetString(new byte[] { 255, 116, 79, 99 });
+		private static readonly string MAGIC_NUMBER = Encoding.BigEndianUnicode.GetString(new byte[] { 255, 116, 79, 99 });
 
 		private Pack() { }
 
@@ -79,7 +79,7 @@ namespace dotGit.Objects.Storage
 			if (!VERSIONS.Contains(Version))
 				throw new PackFileException(String.Format("Unknown version number {0}. Needs to be one of: {1}", Version, String.Join(",", VERSIONS.Select(i => i.ToString()).ToArray())), PackFilePath);
 
-			if (HEADER != Encoding.UTF8.GetString(header))
+			if (HEADER != Encoding.BigEndianUnicode.GetString(header))
 				throw new PackFileException("Invalid header for pack-file. Needs to be: 'PACK'", PackFilePath);
 		}
 
@@ -99,7 +99,7 @@ namespace dotGit.Objects.Storage
 			if (!VERSIONS.Contains(Version))
 				throw new PackFileException(String.Format("Unknown version number {0}. Needs to be one of: {1}", Version, String.Join(",", VERSIONS.Select(i => i.ToString()).ToArray())), IndexFilePath);
 
-			if (MAGIC_NUMBER != Encoding.UTF8.GetString(magicNumber))
+			if (MAGIC_NUMBER != Encoding.BigEndianUnicode.GetString(magicNumber))
 				throw new PackFileException("Invalid header for pack-file. Needs to be: 'PACK'", IndexFilePath);
 		}
 

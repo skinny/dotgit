@@ -48,14 +48,19 @@
     <Compile Include="Exceptions\PackFileException.cs" />
     <Compile Include="Exceptions\ParseException.cs" />
     <Compile Include="Generic\Extensions.cs" />
-    <Compile Include="Generic\GitObjectStream.cs" />
+    <Compile Include="Generic\GitObjectReader.cs" />
     <Compile Include="Generic\InternalWritableList.cs" />
     <Compile Include="Generic\Sha.cs" />
     <Compile Include="Generic\Zlib.cs" />
-    <Compile Include="Index.cs" />
+    <Compile Include="Index\Index.cs" />
+    <Compile Include="Index\IndexEntry.cs" />
+    <Compile Include="Index\IndexEntryCollection.cs" />
+    <Compile Include="Index\IndexTime.cs" />
     <Compile Include="Objects\Blob.cs" />
     <Compile Include="Objects\Commit.cs" />
+    <Compile Include="Objects\FileMode.cs" />
     <Compile Include="Objects\GitObject.cs" />
+    <Compile Include="Objects\ObjectType.cs" />
     <Compile Include="Objects\TreeNodeCollection.cs" />
     <Compile Include="Objects\Storage\Deltified.cs" />
     <Compile Include="Objects\Storage\IStorableObject.cs" />
@@ -76,6 +81,9 @@
     <Compile Include="Repository.cs" />
     <Compile Include="Objects\Tree.cs" />
     <Compile Include="Generic\Utility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />

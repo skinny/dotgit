@@ -64,9 +64,10 @@ namespace dotGit.Objects.Storage
 			string looseObjectPath = Path.Combine(ObjectsDir, Path.Combine(sha.Substring(0, 2), sha.Substring(2)));
 			if (File.Exists(looseObjectPath))
 			{
-				byte[] contents = Zlib.Decompress(looseObjectPath);
-
-				return LoadObjectFromContent(Repo, contents, sha);
+				using (GitObjectReader reader = new GitObjectReader(Zlib.Decompress(looseObjectPath)))
+				{
+					return LoadObjectFromInflatedStream(Repo, reader, sha);
+				}
 			}
 			else
 			{
@@ -83,14 +84,12 @@ namespace dotGit.Objects.Storage
 			return (T)GetObject(sha);
 		}
 
-		private static IStorableObject LoadObjectFromContent(Repository repo, byte[] uncomprContents, string sha)
+		private static IStorableObject LoadObjectFromInflatedStream(Repository repo, GitObjectReader input, string sha)
 		{
 			long length;
 			string type;
-			using (GitObjectStream stream = new GitObjectStream(uncomprContents))
-			{
-				length = stream.ReadObjectHeader(out type);
-			}
+			length = input.ReadObjectHeader(out type);
+			
 
 			bool haveSha = !String.IsNullOrEmpty(sha);
 
@@ -130,7 +129,7 @@ namespace dotGit.Objects.Storage
 			}
 
 			// Let the respective object type load itself from the object content
-			result.Deserialize(uncomprContents);
+			result.Deserialize(input);
 
 			return result;
 		}

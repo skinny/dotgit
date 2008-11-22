@@ -38,5 +38,10 @@ namespace dotGit.Generic
 			private set;
 
 		}
+
+		public int Count
+		{
+			get { return List.Count; }
+		}
 	}
 }

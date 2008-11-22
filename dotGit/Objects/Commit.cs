@@ -46,6 +46,7 @@ namespace dotGit.Objects
 			}
 		}
 
+		// TODO: This should be a collection of parents
 		public Commit Parent
 		{
 			get
@@ -90,46 +91,49 @@ namespace dotGit.Objects
 			private set;
 		}
 
-		public override void Deserialize(byte[] contents)
+		public override void Deserialize(GitObjectReader input)
 		{
 			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(contents);
+				SHA = Sha.Compute(input);
 
-			using (GitObjectStream stream = new GitObjectStream(contents))
+
+			input.Rewind();
+
+			//Skip header
+			if(input.IsStartOfStream)
+				input.ReadToNull();
+
+
+			//Skip 'tree' at beginning of line and read tree sha
+			input.ReadWord();
+			_treeSha = input.ReadLine().GetString();
+
+			// Check for 'parent' at beginning of line
+			string parentOrAuthor = input.ReadWord().GetString();
+
+			// TODO: Make recursive
+			if (parentOrAuthor == "parent")
 			{
-				//Skip header
-				stream.ReadToNull();
+				_parentSha = input.ReadLine().GetString();
 
-
-				//Skip 'tree' at beginning of line and read tree sha
-				stream.ReadWord();
-				_treeSha = Encoding.UTF8.GetString(stream.ReadLine());
-
-				// Check for 'parent' at beginning of line
-				string parentOrAuthor = Encoding.UTF8.GetString(stream.ReadWord());
-				if (parentOrAuthor == "parent")
-				{
-					_parentSha = Encoding.UTF8.GetString(stream.ReadLine());
-
-					// Skip 'author'
-					stream.ReadWord();
-				}
-
-				// Author
-				string authorLine = Encoding.UTF8.GetString(stream.ReadLine());
-				AuthoredDate = Utility.StripDate(authorLine, out authorLine);
-				Author = Contributer.Parse(authorLine);
-
-				// Committer
-				stream.ReadWord();
-				string committerLine = Encoding.UTF8.GetString(stream.ReadLine());
-				CommittedDate = Utility.StripDate(committerLine, out committerLine);
-				Committer = Contributer.Parse(committerLine);
-
-				//Skip extra '\n'
-				stream.ReadBytes(1);
-				Message = Encoding.UTF8.GetString(stream.ReadToEnd()).TrimEnd();
+				// Skip 'author'
+				input.ReadWord();
 			}
+
+			// Author
+			string authorLine = input.ReadLine().GetString();
+			AuthoredDate = Utility.StripDate(authorLine, out authorLine);
+			Author = Contributer.Parse(authorLine);
+
+			// Committer
+			input.ReadWord();
+			string committerLine = input.ReadLine().GetString();
+			CommittedDate = Utility.StripDate(committerLine, out committerLine);
+			Committer = Contributer.Parse(committerLine);
+
+			//Skip extra '\n'
+			input.ReadBytes(1);
+			Message = input.ReadToEnd().GetString().TrimEnd();
 		}
 
 		public override byte[] Serialize()

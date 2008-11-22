@@ -47,7 +47,7 @@ namespace dotGit.Objects
 			private set;
 		}
 
-		public abstract void Deserialize(byte[] contents);
+		public abstract void Deserialize(GitObjectReader input);
 		public abstract byte[] Serialize();
 	
 	}

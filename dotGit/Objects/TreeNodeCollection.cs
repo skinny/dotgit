@@ -10,11 +10,11 @@ namespace dotGit.Objects
 {
 	public class TreeNodeCollection : InternalWritableList<TreeNode>
 	{
-		public TreeNodeCollection()
+		internal TreeNodeCollection()
 			: base()
 		{ }
 
-		public TreeNodeCollection(int capacity)
+		internal TreeNodeCollection(int capacity)
 			:base(capacity)
 		{
 

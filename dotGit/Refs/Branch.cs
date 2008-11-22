@@ -16,7 +16,7 @@ namespace dotGit.Refs
 		internal Branch(Repository repo, string path)
 			: base(repo, path)
 		{
-			string sha = Encoding.UTF8.GetString(IO.File.ReadAllBytes(File.FullName)).Trim();
+			string sha = IO.File.ReadAllBytes(File.FullName).GetString().Trim();
 			if (!Utility.IsValidSHA(sha))
 				throw new ArgumentException("Need valid sha", "contents");
 
@@ -25,7 +25,7 @@ namespace dotGit.Refs
 		}
 
 		/// <summary>
-		/// The commit this reference points to
+		/// The commit this branch points to
 		/// </summary>
 		public Commit Commit
 		{

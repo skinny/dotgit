@@ -33,29 +33,30 @@ namespace dotGit.Objects
 
 				return _children;
 			}
-			private set
-			{
-				_children = value;
-			}
+		}
+
+		public bool HasChildren
+		{
+			get { return Children != null && Children.Count > 0; }
 		}
 
 		private void LoadChildren()
 		{
-			Children = new TreeNodeCollection();
+			_children = new TreeNodeCollection();
 
-			using (GitObjectStream stream = new GitObjectStream(_childrenRaw))
+			using (GitObjectReader stream = new GitObjectReader(_childrenRaw))
 			{
-				while (!stream.IsEndOfFile)
+				while (!stream.IsEndOfStream)
 				{
 					string mode, path, sha;
 
-					mode = Encoding.UTF8.GetString(stream.ReadWord());
-					path = Encoding.UTF8.GetString(stream.ReadToNull());
+					mode = stream.ReadWord().GetString();
+					path = stream.ReadToNull().GetString();
 					sha = Sha.Decode(stream.ReadBytes(20));
 
 					TreeNode child = Repo.Storage.GetObject<TreeNode>(sha);
 					child.Path = path;
-					child.Mode = mode;
+					child.Mode = FileMode.FromBits(int.Parse(mode));
 					child.Parent = this;
 
 					_children.Add(child);
@@ -63,20 +64,13 @@ namespace dotGit.Objects
 			}
 		}
 
-		public override void Deserialize(byte[] contents)
+		public override void Deserialize(GitObjectReader input)
 		{
-			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(contents);
+			//Skip header
+			if(input.IsStartOfStream)
+				input.ReadToNull();
 
-			using (GitObjectStream stream = new GitObjectStream(contents))
-			{
-				//string content = Encoding.UTF8.GetString(stream.ReadToEnd());
-				
-				//Skip header
-				stream.ReadToNull();
-
-				_childrenRaw = stream.ReadToEnd();
-			}
+			_childrenRaw = input.ReadToEnd();
 		}
 
 		public override byte[] Serialize()

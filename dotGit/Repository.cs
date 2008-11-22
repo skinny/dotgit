@@ -9,6 +9,7 @@ using System.Security.AccessControl;
 using dotGit.Objects.Storage;
 using dotGit.Generic;
 using dotGit.Refs;
+using IDX = dotGit.Index;
 
 namespace dotGit
 {
@@ -23,6 +24,7 @@ namespace dotGit
 		private ObjectStorage _storage = null;
 		private RefCollection<Branch> _branches = null;
 		private RefCollection<Tag> _tags = null;
+		private IDX.Index _index = null;
 
 		#endregion
 
@@ -80,12 +82,6 @@ namespace dotGit
 			return new Repository(newRepositoryPath, true);
 		}
 
-		private void LoadHead()
-		{
-			_head = new Head(this);
-		}
-
-
 		private void LoadBranches()
 		{
 			string[] branches = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\heads"));
@@ -125,7 +121,7 @@ namespace dotGit
 			get
 			{
 				if (_head == null)
-					LoadHead();
+					_head = new Head(this);
 
 				return _head;
 			}
@@ -153,10 +149,15 @@ namespace dotGit
 			}
 		}
 
-		public Index Index
+		public IDX.Index Index
 		{
-			get;
-			private set;
+			get
+			{
+				if (_index == null)
+					_index = new IDX.Index(this);
+
+				return _index;
+			}
 		}
 
 		public string RepositoryPath

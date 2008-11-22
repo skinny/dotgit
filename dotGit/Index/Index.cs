@@ -17,9 +17,9 @@ namespace dotGit.Index
 		{
 			Repo = repo;
 
-			using(GitObjectStream stream = new GitObjectStream(File.OpenRead(Path.Combine(Repo.GitDir.FullName, "index"))))
+			using(GitObjectReader stream = new GitObjectReader(File.OpenRead(Path.Combine(Repo.GitDir.FullName, "index"))))
 			{
-				string header = Encoding.UTF8.GetString(stream.ReadBytes(4));
+				string header = stream.ReadBytes(4).GetString();
 
 				if (header != HEADER)
 					throw new ParseException("Could not parse Index file. Expected HEADER: '{0}', got: '{1}'".FormatWith(HEADER, header));
@@ -64,6 +64,11 @@ namespace dotGit.Index
 		{
 			get;
 			private set;
+		}
+
+		public bool StageIsNormal
+		{
+			get { return !Entries.Any(e => e.Stage != IndexStage.Normal); }
 		}
 	}
 }

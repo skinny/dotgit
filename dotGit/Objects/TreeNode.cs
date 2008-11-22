@@ -22,7 +22,7 @@ namespace dotGit.Objects
 			internal set;
 		}
 
-		public string Mode
+		public FileMode Mode
 		{
 			get;
 			internal set;

@@ -3,27 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using dotGit.Generic;
 
 namespace dotGit.Objects.Storage
 {
-	public class PackObjectCollection : IEnumerable<PackObject>
+	public class PackObjectCollection : InternalWritableList<PackObject>
 	{
-		private List<PackObject> Objects
+		internal PackObjectCollection()
+			: base()
+		{ }
+
+		internal PackObjectCollection(int capacity)
+			:base(capacity)
 		{
-			get;
-			set;
+
 		}
-
-		public IEnumerator<PackObject> GetEnumerator()
-		{
-			return Objects.GetEnumerator();
-		}
-
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return Objects.GetEnumerator();
-		}
-
 	}
 }

@@ -34,7 +34,7 @@ namespace dotGit.Refs
 			IO.FileInfo refFile = Ref.GetRefFile(repo, path);
 
 			string sha = IO.File.ReadAllText(refFile.FullName).Trim();
-			if(!Utility.IsValidSHA(sha))
+			if (!Utility.IsValidSHA(sha))
 				throw new ParseException("Tag does not contain valid sha");
 
 
@@ -53,7 +53,7 @@ namespace dotGit.Refs
 				t.Object = obj;
 				t.Path = path;
 				return t;
-			}		
+			}
 		}
 
 		public IStorableObject Object
@@ -85,53 +85,49 @@ namespace dotGit.Refs
 			get { return !String.IsNullOrEmpty(Message) && Tagger != null && TagDate != null; }
 		}
 
-		public void Deserialize(byte[] contents)
+		public void Deserialize(GitObjectReader input)
 		{
 			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(contents);
+				SHA = Sha.Compute(input);
 
 
-			using (GitObjectStream stream = new GitObjectStream(contents))
+			string sha;
+			if (Utility.IsValidSHA(input.GetString(20), out sha))
+			{ // Tag contains a regular SHA so we can assume it's a commit
+				Object = Repo.Storage.GetObject(sha);
+				return;
+			}
+			else
 			{
-				string sha;
-				if (Utility.IsValidSHA(Encoding.UTF8.GetString(stream.ReadBytes(20)), out sha))
-				{ // Tag contains a regular SHA so we can assume it's a commit
-					Object = Repo.Storage.GetObject(sha);
-					return;
-				}
-				else
-				{
-					stream.Rewind();
+				input.Rewind();
 
-					// Skip header
-					stream.ReadToNull();
+				// Skip header
+				input.ReadToNull();
 
-					// Skip object keyword
-					stream.ReadWord();
+				// Skip object keyword
+				input.ReadWord();
 
-					string objectSha;
-					objectSha = Encoding.UTF8.GetString(stream.ReadLine()).Trim();
-					if (!Utility.IsValidSHA(objectSha))
-						throw new ParseException("Invalid sha from tag content");
+				string objectSha;
+				objectSha = input.ReadLine().GetString().Trim();
+				if (!Utility.IsValidSHA(objectSha))
+					throw new ParseException("Invalid sha from tag content");
 
-					// Load object; a ParseException will be thrown for unknown types
-					Object = Repo.Storage.GetObject(objectSha);
+				// Load object; a ParseException will be thrown for unknown types
+				Object = Repo.Storage.GetObject(objectSha);
 
-					// Skip type and tag
-					stream.ReadLine(); stream.ReadLine();
+				// Skip type and tag
+				input.ReadLine(); input.ReadLine();
 
-					// Tagger
-					stream.ReadWord();
-					string taggerLine = Encoding.UTF8.GetString(stream.ReadLine());
-					TagDate = Utility.StripDate(taggerLine, out taggerLine);
-					Tagger = Contributer.Parse(taggerLine);
-				
-					//Skip extra '\n' and read message
-					stream.ReadBytes(1);
-					Message = Encoding.UTF8.GetString(stream.ReadToEnd()).TrimEnd();
+				// Tagger
+				input.ReadWord();
+				string taggerLine = input.ReadLine().GetString();
+				TagDate = Utility.StripDate(taggerLine, out taggerLine);
+				Tagger = Contributer.Parse(taggerLine);
 
+				//Skip extra '\n' and read message
+				input.ReadBytes(1);
+				Message = input.ReadToEnd().GetString().TrimEnd();
 
-				}
 			}
 		}
 

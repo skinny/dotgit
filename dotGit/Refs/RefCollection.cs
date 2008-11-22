@@ -21,7 +21,14 @@ namespace dotGit.Refs
 		{
 			get
 			{
-				return List.First(obj => obj.Name == name);
+				try
+				{
+					return List.First(obj => obj.Name == name);
+				}
+				catch (InvalidOperationException)
+				{ // No object was found by that name
+					throw new IndexOutOfRangeException("No {0} found with name: {1}".FormatWith(typeof(T).Name, name));
+				}
 			}
 		}
 	}

@@ -13,7 +13,7 @@ namespace dotGit.Generic
 		public static string Compute(byte[] contents)
 		{
 			byte[] computedHash = _sha.ComputeHash(contents);
-			return Decode(computedHash).Replace("-", "").ToLower();
+			return Decode(computedHash);
 		}
 
 		public static string Decode(byte[] sha)
@@ -21,5 +21,18 @@ namespace dotGit.Generic
 			return BitConverter.ToString(sha).Replace("-", "").ToLower();
 		}
 
+
+		internal static string Compute(GitObjectReader input)
+		{
+			long oldPosition = input.BaseStream.Position;
+
+			input.Rewind();
+
+			string hash = Compute(input.ReadToEnd());
+
+			input.BaseStream.Position = oldPosition;
+
+			return hash;
+		}
 	}
 }

@@ -15,21 +15,20 @@ namespace dotGit.Objects
 		{ }
 
 		internal Blob(Repository repo, string sha)
-			:base(repo, sha)
+			: base(repo, sha)
 		{ }
 
-		public override void Deserialize(byte[] contents)
+		public override void Deserialize(GitObjectReader stream)
 		{
 			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(contents);
+				SHA = Sha.Compute(stream);
 
-			using (GitObjectStream stream = new GitObjectStream(contents))
-			{
-				//Skip header
+
+			//Skip header
+			if(stream.IsStartOfStream)
 				stream.ReadToNull();
 
-				Content = stream.ReadToEnd();
-			}
+			Content = stream.ReadToEnd();
 		}
 
 		public override byte[] Serialize()

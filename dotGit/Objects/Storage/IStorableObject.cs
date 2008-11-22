@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using dotGit.Generic;
 
 namespace dotGit.Objects.Storage
 {
@@ -11,7 +12,7 @@ namespace dotGit.Objects.Storage
 		/// Load object contents from byte array
 		/// </summary>
 		/// <param name="contents"></param>
-		void Deserialize(byte[] contents);
+		void Deserialize(GitObjectReader contents);
 
 		/// <summary>
 		/// Serializes the object to an array of bytes
