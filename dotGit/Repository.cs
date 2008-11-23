@@ -10,6 +10,7 @@ using dotGit.Objects.Storage;
 using dotGit.Objects;
 using dotGit.Refs;
 using IDX = dotGit.Index;
+using dotGit.Generic;
 
 namespace dotGit
 {

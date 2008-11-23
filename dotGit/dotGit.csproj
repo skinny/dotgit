@@ -62,6 +62,10 @@
     <Compile Include="Objects\FileMode.cs" />
     <Compile Include="Objects\GitObject.cs" />
     <Compile Include="Objects\ObjectType.cs" />
+    <Compile Include="Objects\Storage\GitPackReader.cs" />
+    <Compile Include="Objects\Storage\PackIndexV2.cs" />
+    <Compile Include="Objects\Storage\PackV2.cs" />
+    <Compile Include="Objects\Storage\PackV2Pack.cs" />
     <Compile Include="Objects\TreeNodeCollection.cs" />
     <Compile Include="Objects\Storage\Deltified.cs" />
     <Compile Include="Objects\Storage\IStorableObject.cs" />

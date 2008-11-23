@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using dotGit.Exceptions;
-using dotGit.Objects;
+using dotGit.Generic;
 using dotGit.Refs;
 
 namespace dotGit.Objects.Storage
@@ -26,15 +26,15 @@ namespace dotGit.Objects.Storage
 		{
 			Repo = repo;
 
-			string[] indexFiles = Directory.GetFiles(Path.Combine(ObjectsDir, "pack"));
+			string[] packFiles = Directory.GetFiles(Path.Combine(ObjectsDir, "pack"));
 
 			// strip file extension and collect unique pack names
-			indexFiles = indexFiles.Select((content) => Path.Combine(Path.GetDirectoryName(content), Path.GetFileNameWithoutExtension(content))).Distinct().ToArray();
-			Packs = new InternalWritableList<Pack>(indexFiles.Length);
+			packFiles = packFiles.Select((content) => Path.Combine(Path.GetDirectoryName(content), Path.GetFileNameWithoutExtension(content))).Distinct().ToArray();
+			Packs = new InternalWritableList<Pack>(packFiles.Length);
 			
-			foreach (string packFile in indexFiles)
+			foreach (string packFile in packFiles)
 			{
-				Packs.Add(new Pack(packFile));
+				Packs.Add(Pack.LoadPack(packFile));
 			}
 		}
 
@@ -58,10 +58,10 @@ namespace dotGit.Objects.Storage
 		private Repository Repo { get; set; }
 
 		/// <summary>
-		/// Find object in database and return it as an IStorableObject. Use the generic overload if you know the type up front
+		/// Find object in database and return it as an IStorableObject. Use the generic overload if you know the type up front. Throws ObjectNotFoundException if object was not found in database.
 		/// </summary>
-		/// <param name="sha">SHA object identifier</param>
-		/// <returns>GitObject from </returns>
+		/// <param name="sha">SHA object identifier. Throws ArgumentException if it is null or not a valid sha</param>
+		/// <returns>GitObject in database</returns>
 		public IStorableObject GetObject(string sha)
 		{
 			if (!Utility.SHAExpression.IsMatch(sha))
@@ -79,6 +79,15 @@ namespace dotGit.Objects.Storage
 			}
 			else
 			{
+				foreach (Pack pack in Packs)
+				{
+					try
+					{
+						PackObject obj = pack.GetObject(sha);
+					}
+					catch (ObjectNotFoundException)
+					{  }
+				}
 				// TODO: Look for object in pack files
 			}
 

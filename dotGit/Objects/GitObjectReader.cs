@@ -8,9 +8,6 @@ namespace dotGit.Objects
 {
 	public class GitObjectReader : BinaryReader
 	{
-//		private readonly Stream _stream;
-
-
 		public GitObjectReader(Stream stream)
 			:base(stream, Encoding.ASCII)
 		{	}
@@ -22,11 +19,6 @@ namespace dotGit.Objects
 		public byte[] ReadToNextNonNull()
 		{
 			return SkipChars('\0');
-
-			// knock it back a byte because we'll have grabbed one extra
-			//_stream.Position--;
-
-			//return result;
 		}
 
 		public byte[] SkipChars(char charToSkip)

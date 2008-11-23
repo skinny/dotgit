@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using dotGit.Objects;
 using dotGit.Exceptions;
+using dotGit.Generic;
 
 namespace dotGit
 {
