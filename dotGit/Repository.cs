@@ -7,7 +7,7 @@ using dotGit.Exceptions;
 using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using dotGit.Objects.Storage;
-using dotGit.Generic;
+using dotGit.Objects;
 using dotGit.Refs;
 using IDX = dotGit.Index;
 

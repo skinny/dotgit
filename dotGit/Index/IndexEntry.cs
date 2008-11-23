@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using dotGit.Generic;
+using dotGit.Objects;
 using dotGit.Objects;
 using System.IO;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using dotGit.Objects.Storage;
-using dotGit.Generic;
+using dotGit.Objects;
 using IO = System.IO;
 using dotGit.Objects;
 using dotGit.Exceptions;

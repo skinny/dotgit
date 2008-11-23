@@ -7,7 +7,7 @@ using IO = System.IO;
 using dotGit.Exceptions;
 using dotGit.Objects;
 using System.Runtime.Serialization;
-using dotGit.Generic;
+using dotGit.Objects;
 
 namespace dotGit.Refs
 {

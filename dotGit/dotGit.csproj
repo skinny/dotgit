@@ -48,7 +48,7 @@
     <Compile Include="Exceptions\PackFileException.cs" />
     <Compile Include="Exceptions\ParseException.cs" />
     <Compile Include="Generic\Extensions.cs" />
-    <Compile Include="Generic\GitObjectReader.cs" />
+    <Compile Include="Objects\GitObjectReader.cs" />
     <Compile Include="Generic\InternalWritableList.cs" />
     <Compile Include="Generic\Sha.cs" />
     <Compile Include="Generic\Zlib.cs" />

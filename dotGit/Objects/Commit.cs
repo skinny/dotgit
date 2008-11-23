@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using dotGit.Objects.Storage;
 using System.Security.Cryptography;
-using dotGit.Generic;
+using dotGit.Objects;
 
 namespace dotGit.Objects
 {

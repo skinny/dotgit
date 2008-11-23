@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using dotGit.Exceptions;
-using dotGit.Generic;
+using dotGit.Objects;
 using dotGit.Refs;
 
 namespace dotGit.Objects.Storage

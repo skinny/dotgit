@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace dotGit.Generic
+namespace dotGit.Objects
 {
 	public class GitObjectReader : BinaryReader
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using dotGit;
 using System.Collections;
-using dotGit.Generic;
+using dotGit.Objects;
 
 namespace dotGit.Objects
 {
