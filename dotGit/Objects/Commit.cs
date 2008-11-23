@@ -23,12 +23,18 @@ namespace dotGit.Objects
 			: base(repo, sha)
 		{ }
 
+		/// <summary>
+		/// The message for this commit
+		/// </summary>
 		public string Message
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The tree object this commit is referencing
+		/// </summary>
 		public Tree Tree
 		{
 			get
@@ -46,7 +52,10 @@ namespace dotGit.Objects
 			}
 		}
 
-		// TODO: This should be a collection of parents
+		
+		/// <summary>
+		/// The ancestors of this commit. 
+		/// </summary>
 		public CommitCollection Parents
 		{
 			get
@@ -58,6 +67,10 @@ namespace dotGit.Objects
 			}
 		}
 
+
+		/// <summary>
+		/// Called from the Parents getter for lazy loading
+		/// </summary>
 		private void LoadParents()
 		{
 			_parents = new CommitCollection();
@@ -66,35 +79,54 @@ namespace dotGit.Objects
 				_parents.Add(Repo.Storage.GetObject<Commit>(parentSha));
 		}
 
+		/// <summary>
+		/// Returns true if this commit has at least 1 parent commit
+		/// </summary>
 		public bool HasParents
 		{
 			get { return Parents != null && Parents.Count > 0; }
 		}
 
+		/// <summary>
+		/// The contributer that made this commit
+		/// </summary>
 		public Contributer Committer
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The date this commit has been made
+		/// </summary>
 		public DateTime CommittedDate
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The original author of this commit
+		/// </summary>
 		public Contributer Author
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The original date of this commit
+		/// </summary>
 		public DateTime AuthoredDate
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// Loads the commit from the GitObjectReader
+		/// </summary>
+		/// <param name="input">A reader with inflated commit contents</param>
 		public override void Deserialize(GitObjectReader input)
 		{
 			if (String.IsNullOrEmpty(SHA))

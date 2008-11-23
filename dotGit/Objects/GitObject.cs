@@ -10,6 +10,9 @@ using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
+	/// <summary>
+	/// Is the base class for TreeNode and Commit
+	/// </summary>
 	public abstract class GitObject : IStorableObject
 	{
 		private GitObject()

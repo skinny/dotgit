@@ -23,6 +23,11 @@ namespace dotGit
 			Email = email;
 		}
 
+		/// <summary>
+		/// Load Contributer from git formatted string.
+		/// </summary>
+		/// <param name="input">stirng in format: 'John Doe &lt;john@doe.com&gt;'</param>
+		/// <returns>parsed Contributer</returns>
 		public static Contributer Parse(string input)
 		{
 			Match match = Utility.ContributorRegex.Match(input);
@@ -40,17 +45,27 @@ namespace dotGit
 			return new Contributer(name, email);
 		}
 
+		/// <summary>
+		/// Returns the name and email in git format: 'John Doe &lt;john@doe.com&gt;'
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("{0} <{1}>", Name, Email);
 		}
 
+		/// <summary>
+		/// The name of this contributer
+		/// </summary>
 		public string Name
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The email address of this contribute
+		/// </summary>
 		public string Email
 		{
 			get;

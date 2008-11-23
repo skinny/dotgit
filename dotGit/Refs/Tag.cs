@@ -11,6 +11,9 @@ using dotGit.Exceptions;
 
 namespace dotGit.Refs
 {
+	/// <summary>
+	/// Represents a tag in the repository. Tags can reference any IStorableObject in the repository
+	/// </summary>
 	public class Tag : Ref, IStorableObject
 	{
 		internal Tag(Repository repo)
@@ -23,6 +26,9 @@ namespace dotGit.Refs
 			SHA = sha;
 		}
 
+		/// <summary>
+		/// The SHA this tag is referenced by
+		/// </summary>
 		public string SHA
 		{
 			get;
@@ -56,35 +62,57 @@ namespace dotGit.Refs
 			}
 		}
 
+
+		/// <summary>
+		/// The IStorableObject this tag references
+		/// </summary>
 		public IStorableObject Object
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The contributer that made this tag
+		/// </summary>
 		public Contributer Tagger
 		{
 			get;
 			private set;
 		}
 
+
+		/// <summary>
+		/// The date this tag was made
+		/// </summary>
 		public DateTime TagDate
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The message for this tag
+		/// </summary>
 		public string Message
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// Returns true if this tag has a message. Returns false if this is a 'lightweight' tag
+		/// </summary>
 		public bool IsAnnotated
 		{
 			get { return !String.IsNullOrEmpty(Message) && Tagger != null && TagDate != null; }
 		}
 
+
+		/// <summary>
+		/// Loads the tag from the GitObjectReader
+		/// </summary>
+		/// <param name="input">A reader with inflated tag contents</param>
 		public void Deserialize(GitObjectReader input)
 		{
 			if (String.IsNullOrEmpty(SHA))

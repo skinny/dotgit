@@ -36,6 +36,9 @@ namespace dotGit.Objects
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// This blob's real contents
+		/// </summary>
 		public byte[] Content
 		{
 			get;

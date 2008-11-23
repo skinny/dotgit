@@ -9,6 +9,9 @@ using dotGit.Objects.Storage;
 
 namespace dotGit.Objects
 {
+	/// <summary>
+	/// Represents a tree in a git repository. Has Children of type TreeNode which can either be a blog or a tree.
+	/// </summary>
 	public class Tree : TreeNode
 	{
 		private byte[] _childrenRaw;
@@ -22,6 +25,9 @@ namespace dotGit.Objects
 			: base(repo, sha)
 		{ }
 
+		/// <summary>
+		/// All of the children of this tree. A child can either be a blob or a tree
+		/// </summary>
 		public TreeNodeCollection Children
 		{
 			get
@@ -35,11 +41,18 @@ namespace dotGit.Objects
 			}
 		}
 
+		/// <summary>
+		/// Returns true if this tree has at least 1 child
+		/// </summary>
 		public bool HasChildren
 		{
 			get { return Children != null && Children.Count > 0; }
 		}
 
+
+		/// <summary>
+		/// Gets called be the Children getter for lazy loading
+		/// </summary>
 		private void LoadChildren()
 		{
 			_children = new TreeNodeCollection();
@@ -64,6 +77,11 @@ namespace dotGit.Objects
 			}
 		}
 
+
+		/// <summary>
+		/// Loads the tree from the GitObjectReader. The child objects themselves will be lazy loaded
+		/// </summary>
+		/// <param name="input">A reader with inflated tree contents</param>
 		public override void Deserialize(GitObjectReader input)
 		{
 			//Skip header
