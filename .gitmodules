@@ -1,3 +1,8 @@
+<<<<<<< HEAD:.gitmodules
 [submodule "Test/Resources/TestRepo"]
 	path = Test/Resources/TestRepo
+=======
+[submodule "./Test/Resources/TestRepo"]
+	path = ./Test/Resources/TestRepo
+>>>>>>> gh/master:.gitmodules
 	url = git://github.com/pheew/dotgit.git
