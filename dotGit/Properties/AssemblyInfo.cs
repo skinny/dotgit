@@ -5,14 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GitObjects")]
-[assembly: AssemblyDescription("Git for .NET")]
+[assembly: AssemblyTitle("dotGit")]
+[assembly: AssemblyDescription("Managed .NET libray for accessing and manipulating a Git repository")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GitObjects")]
+[assembly: AssemblyProduct("dotGit")]
 [assembly: AssemblyCopyright("Copyright ©  2008")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
