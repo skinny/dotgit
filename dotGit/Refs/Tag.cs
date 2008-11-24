@@ -8,6 +8,7 @@ using dotGit.Objects;
 using IO = System.IO;
 using dotGit.Objects;
 using dotGit.Exceptions;
+using dotGit.Generic;
 
 namespace dotGit.Refs
 {

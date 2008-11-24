@@ -118,7 +118,7 @@ namespace dotGit.Objects
 			}
 
 			// Create the info/exclude file
-			using (StreamWriter sw = new StreamWriter(File.Open(Path.Combine(path, @"info\exclude"), FileMode.Create)))
+			using (StreamWriter sw = new StreamWriter(File.OpenRead(Path.Combine(path, @"info\exclude"))))
 			{
 				sw.WriteLine("# git-ls-files --others --exclude-from=.git/info/exclude");
 				sw.WriteLine("# Lines that start with '#' are comments.");

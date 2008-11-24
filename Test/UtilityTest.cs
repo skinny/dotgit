@@ -7,6 +7,7 @@ using dotGit;
 using System.IO;
 using System.Reflection;
 using dotGit.Generic;
+using dotGit.Objects;
 
 namespace Test
 {

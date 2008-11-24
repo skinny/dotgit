@@ -10,7 +10,7 @@ namespace dotGit.Objects
 	{
 		public static MemoryStream Decompress(string path)
 		{
-			return Decompress(File.Open(path, FileMode.Open, FileAccess.Read));
+			return Decompress(File.OpenRead(path));
 		}
 
 		public static MemoryStream Decompress(Stream input)
