@@ -29,7 +29,7 @@ namespace dotGit
 
 		#endregion
 
-		#region Constructors / Factory methods
+		#region Constructors / Factory and Lazyload methods
 		private Repository()
 		{	}
 
@@ -122,7 +122,7 @@ namespace dotGit
 		}
 
 
-		#endregion Constructors / Factory methods
+		#endregion Constructors / Factory and Lazyload methods
 
 		#region Properties
 
@@ -205,7 +205,7 @@ namespace dotGit
 		}
 
 		/// <summary>
-		/// All the objects(blobs, trees, commits and tags) are stored and retrieved from the ObjectStorage instance
+		/// All the objects(blobs, trees, commits and tags) can be retrieved from the object database by their sha id through this ObjectStorage instance
 		/// </summary>
 		public ObjectStorage Storage
 		{

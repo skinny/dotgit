@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using dotGit.Objects;
+using dotGit.Generic;
 
 namespace dotGit
 {
@@ -26,7 +26,7 @@ namespace dotGit
 		/// <summary>
 		/// Load Contributer from git formatted string.
 		/// </summary>
-		/// <param name="input">stirng in format: 'John Doe &lt;john@doe.com&gt;'</param>
+		/// <param name="input">string in format: 'John Doe &lt;john@doe.com&gt;'</param>
 		/// <returns>parsed Contributer</returns>
 		public static Contributer Parse(string input)
 		{

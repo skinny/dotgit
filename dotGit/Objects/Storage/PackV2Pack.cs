@@ -14,7 +14,7 @@ namespace dotGit.Objects.Storage
 		internal PackV2Pack(string path)
 			:base(path)
 		{
-			Load();
+			VerifyPack();
 		}
 
 		public override int Version
@@ -32,7 +32,7 @@ namespace dotGit.Objects.Storage
 			throw new NotImplementedException();
 		}
 
-		private void Load()
+		private void VerifyPack()
 		{
 			using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
 			{
@@ -48,7 +48,7 @@ namespace dotGit.Objects.Storage
 
 				if (HEADER != header)
 					throw new PackFileException("Invalid header for pack-file. Needs to be: 'PACK'", Path);
-			}			
+			}
 		}
 	}
 }

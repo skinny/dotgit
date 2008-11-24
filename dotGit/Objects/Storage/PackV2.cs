@@ -49,13 +49,13 @@ namespace dotGit.Objects.Storage
 		{
 			if (Index != null)
 			{
-				long packFileOffset =	Index.GetPackFileOffset(sha);
-
-				
+				long packFileOffset = Index.GetPackFileOffset(sha);
+				return Pack.GetObjectWithOffset(packFileOffset);
 			}
-
-
-			throw new NotImplementedException();
+			else
+			{
+				return Pack.GetObject(sha);
+			}
 		}
 	}
 }
