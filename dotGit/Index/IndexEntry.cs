@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using dotGit.Objects;
+using dotGit.Generic;
 using dotGit.Objects;
 using System.IO;
 
@@ -29,9 +29,9 @@ namespace dotGit.Index
 
 
 			var flags = source.ReadBytes(2);
-			var assumeValid = flags[0].GetBit(0, 1);
-			var updateNeeded = flags[0].GetBit(1, 1);
-			Stage = (IndexStage)flags[0].GetBit(2, 2);
+			var assumeValid = flags[0].GetBits(0, 1);
+			var updateNeeded = flags[0].GetBits(1, 1);
+			Stage = (IndexStage)flags[0].GetBits(2, 2);
 			
 			Path = source.ReadToNull().GetString();
 

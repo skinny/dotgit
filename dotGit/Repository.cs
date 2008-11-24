@@ -31,10 +31,10 @@ namespace dotGit
 
 		#region Constructors / Factory and Lazyload methods
 		private Repository()
-		{	}
+		{ }
 
 		private Repository(string path, bool autoInit)
-			:this()
+			: this()
 		{
 			if (String.IsNullOrEmpty(path))
 				throw new ArgumentNullException("repository", "Need path to repository");
@@ -91,9 +91,19 @@ namespace dotGit
 
 			_branches = new RefCollection<Branch>(branches.Length);
 
-			foreach (string file in branches)
+			try
 			{
-				_branches.Add(new Branch(this, Path.Combine(@"refs\heads", Path.GetFileName(file))));
+				foreach (string file in branches)
+				{
+					_branches.Add(new Branch(this, Path.Combine(@"refs\heads", Path.GetFileName(file))));
+				}
+			}
+			catch (Exception)
+			{ 
+				// Reset _branches field, otherwise the object would be in an invalid state
+				_branches = null;
+
+				throw;
 			}
 		}
 
@@ -105,10 +115,19 @@ namespace dotGit
 			string[] tags = Directory.GetFiles(Path.Combine(GitDir.FullName, @"refs\tags"));
 
 			_tags = new RefCollection<Tag>(tags.Length);
-
-			foreach (string file in tags)
+			try
 			{
-				_tags.Add(Tag.GetTag(this, Path.Combine(@"refs\tags", Path.GetFileName(file))));
+				foreach (string file in tags)
+				{
+					_tags.Add(Tag.GetTag(this, Path.Combine(@"refs\tags", Path.GetFileName(file))));
+				}
+			}
+			catch (Exception)
+			{ 
+				// Reset _tags field, otherwise the object would be in an invalid state
+				_tags = null;
+
+				throw;
 			}
 		}
 

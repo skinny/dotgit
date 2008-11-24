@@ -24,6 +24,8 @@ namespace TestConsole
 			
 			//Tag firstTag = repo.Tags["0.1-alpha"];
 			Branch master = repo.Branches["master"];
+			Console.WriteLine(master.Commit.Tree.Children);
+
 			//Index idx = repo.Index;
 
 			//TreeNodeCollection nodes = repo.HEAD.Commit.Tree.Children;

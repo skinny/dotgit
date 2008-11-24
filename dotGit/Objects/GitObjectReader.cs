@@ -9,12 +9,12 @@ namespace dotGit.Objects
 	public class GitObjectReader : BinaryReader
 	{
 		public GitObjectReader(Stream stream)
-			:base(stream, Encoding.ASCII)
-		{	}
+			: base(stream, Encoding.ASCII)
+		{ }
 
 		public GitObjectReader(byte[] contents)
-			:this(new MemoryStream(contents))
-		{		}
+			: this(new MemoryStream(contents))
+		{ }
 
 		public byte[] ReadToNextNonNull()
 		{
@@ -23,47 +23,51 @@ namespace dotGit.Objects
 
 		public byte[] SkipChars(char charToSkip)
 		{
-			var bytes = new List<byte>();
-
-			while(PeekChar() == charToSkip)
+			using (MemoryStream ms = new MemoryStream())
 			{
-				bytes.Add(ReadByte());
-			}
+				while (PeekChar() == charToSkip)
+				{
+					ms.WriteByte(ReadByte());
+				}
 
-			return bytes.ToArray();
+				return ms.ToArray();
+			}
 		}
 
-		public byte[] ReadToChar(char stop)
+		public byte[] ReadToChar(char stop, bool consume)
 		{
-			var bytes = new List<byte>();
-
-			int current;
-			while (true)
+			using (MemoryStream ms = new MemoryStream())
 			{
-				current = ReadChar();
-				
-				if (current == -1 || current == stop)
-					break;
+				while (BaseStream.Position < BaseStream.Length && PeekChar() != stop)
+				{
+					ms.WriteByte(ReadByte());
+				}
 
-				bytes.Add((byte)current);
+				if (consume)
+					BaseStream.Position++;
+
+				return ms.ToArray();
 			}
-
-			return bytes.ToArray();
 		}
 
 		public byte[] ReadWord()
 		{
-			return ReadToChar(' ');
+			return ReadToChar(' ', true);
+		}
+
+		public byte[] ReadWord(bool consumeSpace)
+		{
+			return ReadToChar(' ', consumeSpace);
 		}
 
 		public byte[] ReadLine()
 		{
-			return ReadToChar('\n');
+			return ReadToChar('\n', true);
 		}
 
 		public byte[] ReadToNull()
 		{
-			return ReadToChar('\0');
+			return ReadToChar('\0', true);
 		}
 
 		public void Rewind()
@@ -73,15 +77,15 @@ namespace dotGit.Objects
 
 		public byte[] ReadToEnd()
 		{
-			var bytes = new List<byte>();
-
-
-			while (!IsEndOfStream)
+			using (MemoryStream ms = new MemoryStream())
 			{
-				bytes.Add((byte)ReadByte());
-			}
+				while (!IsEndOfStream)
+				{
+					ms.WriteByte(ReadByte());
+				}
 
-			return bytes.ToArray();
+				return ms.ToArray();
+			}
 		}
 
 		public long ReadObjectHeader(out string type)
@@ -109,6 +113,12 @@ namespace dotGit.Objects
 		public bool IsStartOfStream
 		{
 			get { return BaseStream.Position == 0; }
+		}
+
+		public long Position
+		{
+			get { return BaseStream.Position; }
+			set { BaseStream.Position = value; }
 		}
 	}
 }

@@ -74,10 +74,20 @@ namespace dotGit.Objects
 		/// </summary>
 		private void LoadParents()
 		{
-			_parents = new CommitCollection();
+			_parents = new CommitCollection(_parentShas.Count);
 
-			foreach(string parentSha in _parentShas)
-				_parents.Add(Repo.Storage.GetObject<Commit>(parentSha));
+			try
+			{
+				foreach (string parentSha in _parentShas)
+					_parents.Add(Repo.Storage.GetObject<Commit>(parentSha));
+			}
+			catch (Exception)
+			{
+				// Reset _parents field, otherwise the object would be in an invalid state
+				_parents = null;
+
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -153,7 +163,8 @@ namespace dotGit.Objects
 			// TODO: Make recursive
 			while (parentOrAuthor == "parent")
 			{
-				_parentShas.Add(input.ReadLine().GetString());
+				_parentShas.Add(input.GetString(40));
+				input.Position++;
 
 				// Skip 'author'
 				parentOrAuthor = input.ReadWord().GetString();
@@ -171,7 +182,7 @@ namespace dotGit.Objects
 			Committer = Contributer.Parse(committerLine);
 
 			//Skip extra '\n'
-			input.ReadBytes(1);
+			input.Position++;
 			Message = input.ReadToEnd().GetString().TrimEnd();
 		}
 

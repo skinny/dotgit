@@ -57,23 +57,33 @@ namespace dotGit.Objects
 		{
 			_children = new TreeNodeCollection();
 
-			using (GitObjectReader stream = new GitObjectReader(_childrenRaw))
+			try
 			{
-				while (!stream.IsEndOfStream)
+				using (GitObjectReader stream = new GitObjectReader(_childrenRaw))
 				{
-					string mode, path, sha;
+					while (!stream.IsEndOfStream)
+					{
+						string mode, path, sha;
 
-					mode = stream.ReadWord().GetString();
-					path = stream.ReadToNull().GetString();
-					sha = Sha.Decode(stream.ReadBytes(20));
+						mode = stream.ReadWord().GetString();
+						path = stream.ReadToNull().GetString();
+						sha = Sha.Decode(stream.ReadBytes(20));
 
-					TreeNode child = Repo.Storage.GetObject<TreeNode>(sha);
-					child.Path = path;
-					child.Mode = FileMode.FromBits(int.Parse(mode));
-					child.Parent = this;
+						TreeNode child = Repo.Storage.GetObject<TreeNode>(sha);
+						child.Path = path;
+						child.Mode = FileMode.FromBits(int.Parse(mode));
+						child.Parent = this;
 
-					_children.Add(child);
+						_children.Add(child);
+					}
 				}
+			}
+			catch (Exception)
+			{
+				// Reset _children field, otherwise the object would be in an invalid state
+				_children = null;
+
+				throw;
 			}
 		}
 

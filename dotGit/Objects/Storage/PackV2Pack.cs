@@ -29,6 +29,20 @@ namespace dotGit.Objects.Storage
 
 		public PackObject GetObjectWithOffset(long offset)
 		{
+			using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
+			{
+				reader.BaseStream.Position = offset;
+				byte[] header = reader.ReadBytes(3);
+				byte[] contents = reader.ReadToNull();
+
+				int type = header[0].GetBits(1, 3);
+
+				using (MemoryStream mStream = Zlib.Decompress(new MemoryStream(contents)))
+				{
+					string result = Encoding.ASCII.GetString(mStream.ToArray());
+				}
+			}
+
 			throw new NotImplementedException();
 		}
 

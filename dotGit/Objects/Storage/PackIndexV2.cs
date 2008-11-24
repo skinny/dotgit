@@ -64,9 +64,6 @@ namespace dotGit.Objects.Storage
 				shas = reader.ReadBytes(NumberOfObjects * 20);
 				crcs = reader.ReadBytes(NumberOfObjects * 4);
 				packFileOffsets = reader.ReadBytes(NumberOfObjects * 4);
-
-
-				// TODO: load fanout table and sha's + offsets
 			}
 		}
 

@@ -6,14 +6,14 @@ using System.IO;
 
 namespace dotGit.Objects.Storage
 {
-	public class GitPackReader : BinaryReader
+	public class GitPackReader : GitObjectReader
 	{
 		public GitPackReader(Stream stream)
-			:base(stream, Encoding.ASCII)
+			:base(stream)
 		{	}
 
 		public GitPackReader(byte[] contents)
-			:this(new MemoryStream(contents))
+			:base(contents)
 		{		}
 	}
 }
