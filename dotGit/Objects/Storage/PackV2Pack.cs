@@ -31,19 +31,56 @@ namespace dotGit.Objects.Storage
 		{
 			using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
 			{
-				reader.BaseStream.Position = offset;
-				byte[] header = reader.ReadBytes(3);
-				byte[] contents = reader.ReadToNull();
+        string packHeader;
+				int version, numberOfObjects;
 
-				int type = header[0].GetBits(1, 3);
+				packHeader = reader.ReadBytes(4).GetString();
+				version = reader.ReadBytes(4).Sum(b => b);
+				numberOfObjects = reader.ReadBytes(4).Sum(b => b);
 
-				using (MemoryStream mStream = Zlib.Decompress(new MemoryStream(contents)))
-				{
-					string result = Encoding.ASCII.GetString(mStream.ToArray());
-				}
+
+        reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+        List<byte> header = new List<byte>();
+
+        while (true)
+        {
+
+          //header.Add((byte)System.Net.IPAddress.HostToNetworkOrder((int)reader.ReadByte()));
+          header.Add(reader.ReadByte());
+          //header.Add((byte)8);
+
+          if (header.Last().GetBits(7, 1) == 0)
+            break;
+        }
+
+
+
+				//byte[] contents = reader.ReadToNull();
+
+				int type = header[0].GetBits(4, 3);
+        //System.Collections.Specialized.BitVector32 v = new System.Collections.Specialized.BitVector32(header[0].GetBits(0, 4));
+
+        //System.Collections.BitArray ar = new System.Collections.BitArray((byte)header[0].GetBits(0, 4));
+
+        //(14 << 3) + 7
+
+        int size = header[0].GetBits(0,4);
+        for (int idx = header.Count-1; idx > 0 ;  idx--)
+        {
+          size = (header[idx].GetBits(0, 7) << Convert.ToString(size, 2).Length) + size;
+        }
+        
+
+//        int size = (int)Convert.ToByte(s);
+        byte[] contents = reader.ReadBytes(size);
+        using (MemoryStream mStream = Zlib.Decompress(new MemoryStream(contents)))
+        {
+          string result = Encoding.ASCII.GetString(mStream.ToArray());
+          return null;
+        }
 			}
 
-			throw new NotImplementedException();
+		//	throw new NotImplementedException();
 		}
 
 		private void VerifyPack()

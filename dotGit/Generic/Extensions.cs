@@ -59,22 +59,6 @@ namespace dotGit
 			return result;
 		}
 
-		/*
-		public static long decodeUInt32(this byte[] intbuf, int offset)
-		{
-			int low = (intbuf[offset + 1] & 0xff) << 8;
-			low |= (intbuf[offset + 2] & 0xff);
-			low <<= 8;
 
-			low |= (intbuf[offset + 3] & 0xff);
-
-			return ((long)(intbuf[offset] & 0xff)) << 24 | low;
-		}
-		*/
-		//public static int ToInt32(this byte[] input, int offset)
-		//{
-
-		//  return BitConverter.ToInt32(input, offset);
-		//}
 	}
 }
