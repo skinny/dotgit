@@ -23,7 +23,7 @@ namespace dotGit.Refs
 		internal void Load()
 		{
 			string[] refs = File.ReadAllLines(Path.Combine(Repo.GitDir.FullName, "packed-refs"));
-			refs = refs.Where(r => !r.StartsWith("#")).ToArray();
+			refs = refs.Where(r => !r.StartsWith("#") && !r.StartsWith("^")).ToArray();
 
 			_packedRefs = new Dictionary<string, string>(refs.Length);
 

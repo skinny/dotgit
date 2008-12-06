@@ -41,7 +41,7 @@ namespace dotGit.Objects.Storage
 				
 				// Read first byte, it contains the type and 4 bits of object length
 				byte buffer = reader.ReadByte();
-				PackObjectType type = (PackObjectType)buffer.GetBits(1, 3);
+				ObjectType type = (ObjectType)((buffer >> 4) & 7);
 				long size = buffer & 0xf;// >> 4;
 
 				// Read byte while 8th bit is 1. 
@@ -63,20 +63,17 @@ namespace dotGit.Objects.Storage
 						objectReader.Rewind();
 						switch (type)
 						{
-							case PackObjectType.OBJ_COMMIT:
+							case ObjectType.Commit:
 								return ObjectStorage.LoadObjectFromContent<Commit>(Repo, objectReader, sha, size);
 
-							case PackObjectType.OBJ_TREE:
+							case ObjectType.Tree:
 								return ObjectStorage.LoadObjectFromContent<Tree>(Repo, objectReader, sha, size);
 
-							case PackObjectType.OBJ_BLOB:
+							case ObjectType.Blob:
 								return ObjectStorage.LoadObjectFromContent<Blob>(Repo, objectReader, sha, size);
 
-							case PackObjectType.OBJ_TAG:
+							case ObjectType.Tag:
 								return ObjectStorage.LoadObjectFromContent<Tag>(Repo, objectReader, sha, size);
-
-							case PackObjectType.OBJ_OFS_DELTA:
-							case PackObjectType.OBJ_REF_DELTE:
 							default:
 								throw new NotImplementedException();
 						}

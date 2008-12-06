@@ -90,7 +90,7 @@ namespace dotGit.Objects
 			}
 		}
 
-		public long ReadObjectHeader(out PackObjectType type)
+		public long ReadObjectHeader(out ObjectType type)
 		{
 			if (!IsStartOfStream)
 				Rewind();
@@ -101,16 +101,16 @@ namespace dotGit.Objects
 			switch (typeString)
 			{
 				case "blob":
-					type = PackObjectType.OBJ_BLOB;
+					type = ObjectType.Blob;
 					break;
 				case "commit":
-					type = PackObjectType.OBJ_COMMIT;
+					type = ObjectType.Commit;
 					break;
 				case "tag":
-					type = PackObjectType.OBJ_TAG;
+					type = ObjectType.Tag;
 					break;
 				case "tree":
-					type = PackObjectType.OBJ_TREE;
+					type = ObjectType.Tree;
 					break;
 				default:
 					throw new ParseException("Unknown type: {0}".FormatWith(typeString));

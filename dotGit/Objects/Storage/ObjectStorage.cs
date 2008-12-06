@@ -76,25 +76,22 @@ namespace dotGit.Objects.Storage
 				using (GitObjectReader reader = new GitObjectReader(Zlib.Decompress(looseObjectPath)))
 				{
 					long size;
-					PackObjectType type;
+					ObjectType type;
 					size = reader.ReadObjectHeader(out type);
 
 					switch (type)
 					{
-						case PackObjectType.OBJ_COMMIT:
+						case ObjectType.Commit:
 							return ObjectStorage.LoadObjectFromContent<Commit>(Repo, reader, sha, size);
 
-						case PackObjectType.OBJ_TREE:
+						case ObjectType.Tree:
 							return ObjectStorage.LoadObjectFromContent<Tree>(Repo, reader, sha, size);
 
-						case PackObjectType.OBJ_BLOB:
+						case ObjectType.Blob:
 							return ObjectStorage.LoadObjectFromContent<Blob>(Repo, reader, sha, size);
 
-						case PackObjectType.OBJ_TAG:
+						case ObjectType.Tag:
 							return ObjectStorage.LoadObjectFromContent<Tag>(Repo, reader, sha, size);
-
-						case PackObjectType.OBJ_OFS_DELTA:
-						case PackObjectType.OBJ_REF_DELTE:
 						default:
 							throw new NotImplementedException();
 					}
