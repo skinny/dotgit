@@ -32,6 +32,11 @@ namespace dotGit.Generic
 			List.Add(item);
 		}
 
+		public T this[int index]
+		{
+			get { return List[index]; }
+		}
+
 		protected List<T> List
 		{
 			get;

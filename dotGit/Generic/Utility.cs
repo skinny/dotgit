@@ -67,7 +67,7 @@ namespace dotGit.Objects
 
 		public static bool IsValidSHA(string input)
 		{
-			return SHAExpression.IsMatch(input);
+			return !String.IsNullOrEmpty(input) && SHAExpression.IsMatch(input);
 		}
 
 		public static bool IsValidSHA(string input, out string sha)

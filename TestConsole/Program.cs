@@ -19,12 +19,12 @@ namespace TestConsole
 		{
 			Repository repo = Repository.Open(@"C:\Projects\dotGit\Test\Resources\TestRepo");
 			Console.WriteLine(repo.Storage);
-
+			
 			//dotGit.Objects.Storage.Pack.LoadPack(System.IO.Path.Combine(repo.GitDir.FullName, "objects\\pack\\pack-209b24047b294e1d9a97680d62a5b9e1d4bef33c"));
 			
 			//Tag firstTag = repo.Tags["0.1-alpha"];
-			Branch master = repo.Branches["master"];
-			Console.WriteLine(master.Commit.Tree.Children);
+			//Branch master = repo.Branches["master"];
+			Console.WriteLine(repo.HEAD.Commit.Tree.Children);
 
 			//Index idx = repo.Index;
 

@@ -5,6 +5,7 @@ using dotGit.Objects.Storage;
 using System.Security.Cryptography;
 using dotGit.Objects;
 using dotGit.Generic;
+using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
@@ -140,17 +141,6 @@ namespace dotGit.Objects
 		/// <param name="input">A reader with inflated commit contents</param>
 		public override void Deserialize(GitObjectReader input)
 		{
-			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(input);
-
-
-			input.Rewind();
-
-			//Skip header
-			if(input.IsStartOfStream)
-				input.ReadToNull();
-
-
 			//Skip 'tree' at beginning of line and read tree sha
 			input.ReadWord();
 			_treeSha = input.ReadLine().GetString();

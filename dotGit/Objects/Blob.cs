@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 using dotGit.Generic;
+using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
@@ -20,14 +21,6 @@ namespace dotGit.Objects
 
 		public override void Deserialize(GitObjectReader stream)
 		{
-			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(stream);
-
-
-			//Skip header
-			if(stream.IsStartOfStream)
-				stream.ReadToNull();
-
 			Content = stream.ReadToEnd();
 		}
 

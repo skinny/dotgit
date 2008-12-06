@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using dotGit.Exceptions;
+using dotGit.Generic;
 
 
 namespace dotGit.Objects.Storage
 {
 	public class PackV2 : Pack
 	{
-		internal PackV2(string path)
-			:base(path)
+		internal PackV2(Repository repo, string path)
+			:base(repo, path)
 		{
 			Index = new PackIndexV2(IndexFilePath);
-			Pack = new PackV2Pack(PackFilePath);
+			Pack = new PackV2Pack(Repo, PackFilePath);
 		}
 
 		public override int Version
@@ -45,12 +46,12 @@ namespace dotGit.Objects.Storage
 		}
 
 
-		public override PackObject GetObject(string sha)
+		public override IStorableObject GetObject(string sha)
 		{
 			if (Index != null)
 			{
-				long packFileOffset = Index.GetPackFileOffset(new dotGit.Generic.Sha(sha));
-				return Pack.GetObjectWithOffset(packFileOffset);
+				long packFileOffset = Index.GetPackFileOffset(new Sha(sha));
+				return Pack.GetObjectWithOffset(sha, packFileOffset);
 			}
 			else
 			{

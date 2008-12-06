@@ -6,6 +6,7 @@ using System.IO;
 using dotGit.Exceptions;
 using dotGit.Generic;
 using dotGit.Refs;
+using System.Reflection;
 
 namespace dotGit.Objects.Storage
 {
@@ -34,7 +35,7 @@ namespace dotGit.Objects.Storage
 			
 			foreach (string packFile in packFiles)
 			{
-				Packs.Add(Pack.LoadPack(packFile));
+				Packs.Add(Pack.LoadPack(Repo, packFile));
 			}
 		}
 
@@ -74,21 +75,47 @@ namespace dotGit.Objects.Storage
 			{ // Object is stored loose. Inflate and load it from content
 				using (GitObjectReader reader = new GitObjectReader(Zlib.Decompress(looseObjectPath)))
 				{
-					return LoadObjectFromInflatedStream(Repo, reader, sha);
+					long size;
+					PackObjectType type;
+					size = reader.ReadObjectHeader(out type);
+
+					switch (type)
+					{
+						case PackObjectType.OBJ_COMMIT:
+							return ObjectStorage.LoadObjectFromContent<Commit>(Repo, reader, sha, size);
+
+						case PackObjectType.OBJ_TREE:
+							return ObjectStorage.LoadObjectFromContent<Tree>(Repo, reader, sha, size);
+
+						case PackObjectType.OBJ_BLOB:
+							return ObjectStorage.LoadObjectFromContent<Blob>(Repo, reader, sha, size);
+
+						case PackObjectType.OBJ_TAG:
+							return ObjectStorage.LoadObjectFromContent<Tag>(Repo, reader, sha, size);
+
+						case PackObjectType.OBJ_OFS_DELTA:
+						case PackObjectType.OBJ_REF_DELTE:
+						default:
+							throw new NotImplementedException();
+					}
+
 				}
 			}
 			else
 			{
+				IStorableObject result = null;
 				foreach (Pack pack in Packs)
 				{
 					try
 					{
-						PackObject obj = pack.GetObject(sha);
+						result = pack.GetObject(sha);
 					}
 					catch (ObjectNotFoundException)
 					{  }
 				}
-				// TODO: Look for object in pack files
+
+				if (result != null)
+					return result;
 			}
 
 
@@ -108,55 +135,15 @@ namespace dotGit.Objects.Storage
 			return (T)GetObject(sha);
 		}
 
-		private static IStorableObject LoadObjectFromInflatedStream(Repository repo, GitObjectReader input, string sha)
+		internal static T LoadObjectFromContent<T>(Repository repo, GitObjectReader input, string sha, long length) where T : IStorableObject
 		{
-			long length;
-			string type;
-			length = input.ReadObjectHeader(out type);
-			
-
-			bool haveSha = !String.IsNullOrEmpty(sha);
-
-			// If sha is passed we can forward it to the object so the SHA does not have to be calculated from the objects contents
-			if (haveSha && !Utility.IsValidSHA(sha))
-				throw new ArgumentException("Must have valid sha", "sha");
-
-			IStorableObject result;
-			switch (type)
-			{
-				case "commit":
-					if (haveSha)
-						result = new Commit(repo, sha);
-					else
-						result = new Commit(repo);
-					break;
-				case "tree":
-					if (haveSha)
-						result = new Tree(repo, sha);
-					else
-						result = new Tree(repo);
-					break;
-				case "blob":
-					if (haveSha)
-						result = new Blob(repo, sha);
-					else
-						result = new Blob(repo);
-					break;
-				case "tag":
-					if (haveSha)
-						result = new Tag(repo, sha);
-					else
-						result = new Tag(repo);
-					break;
-				default:
-					throw new ParseException(String.Format("Could not open object of type: {0}", type));
-			}
+			ConstructorInfo constr = typeof(T).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null,new Type[] { typeof(Repository), typeof(String) }, null);
+			IStorableObject result = (IStorableObject)constr.Invoke(new object[] { repo, sha });			
 
 			// Let the respective object type load itself from the object content
 			result.Deserialize(input);
 
-			return result;
+			return (T)result;
 		}
-
 	}
 }

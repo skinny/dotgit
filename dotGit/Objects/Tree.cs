@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using dotGit.Generic;
 using System.IO;
 using dotGit.Objects.Storage;
+using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
@@ -94,9 +95,9 @@ namespace dotGit.Objects
 		/// <param name="input">A reader with inflated tree contents</param>
 		public override void Deserialize(GitObjectReader input)
 		{
-			//Skip header
-			if(input.IsStartOfStream)
-				input.ReadToNull();
+			//string sha = Sha.Compute(input);
+			//if (SHA != sha)
+			//  throw new ShaMismatchException(SHA, sha);
 
 			_childrenRaw = input.ReadToEnd();
 		}

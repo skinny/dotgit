@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using dotGit.Objects.Storage;
+using dotGit.Exceptions;
 
 namespace dotGit.Objects
 {
@@ -88,14 +90,31 @@ namespace dotGit.Objects
 			}
 		}
 
-		public long ReadObjectHeader(out string type)
+		public long ReadObjectHeader(out PackObjectType type)
 		{
 			if (!IsStartOfStream)
 				Rewind();
 
 			long length;
 
-			type = ReadWord().GetString();
+			string typeString = ReadWord().GetString();
+			switch (typeString)
+			{
+				case "blob":
+					type = PackObjectType.OBJ_BLOB;
+					break;
+				case "commit":
+					type = PackObjectType.OBJ_COMMIT;
+					break;
+				case "tag":
+					type = PackObjectType.OBJ_TAG;
+					break;
+				case "tree":
+					type = PackObjectType.OBJ_TREE;
+					break;
+				default:
+					throw new ParseException("Unknown type: {0}".FormatWith(typeString));
+			}
 			length = ReadToNull().Sum(b => b);
 			return length;
 		}

@@ -7,7 +7,7 @@ using IO = System.IO;
 using dotGit.Exceptions;
 using dotGit.Objects;
 using System.Runtime.Serialization;
-using dotGit.Objects;
+
 
 namespace dotGit.Refs
 {
@@ -16,15 +16,12 @@ namespace dotGit.Refs
 	/// </summary>
 	public class Branch : Ref
 	{
-		internal Branch(Repository repo, string path)
-			: base(repo, path)
+		Commit _commit = null;
+
+		internal Branch(Repository repo, string path, string sha)
+			: base(repo, path, sha)
 		{
-			string sha = IO.File.ReadAllBytes(File.FullName).GetString().Trim();
-			if (!Utility.IsValidSHA(sha))
-				throw new ArgumentException("Need valid sha", "contents");
-
-
-			Commit = Repo.Storage.GetObject<Commit>(sha);
+			
 		}
 
 		/// <summary>
@@ -32,8 +29,22 @@ namespace dotGit.Refs
 		/// </summary>
 		public Commit Commit
 		{
-			get;
-			protected set;
+			get
+			{
+				if (_commit == null)
+					Deserialize();
+
+				return _commit;
+			}
+		}
+
+		internal override void Deserialize()
+		{
+			if (!Utility.IsValidSHA(SHA))
+				throw new ArgumentException("Need valid sha", "contents");
+
+			_commit = Repo.Storage.GetObject<Commit>(SHA);
+
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using dotGit.Objects;
-using dotGit.Objects;
+
 
 namespace dotGit.Refs
 {
@@ -16,11 +16,16 @@ namespace dotGit.Refs
 		{
 			Repo = repo;
 
+			
 			string headContents = File.ReadAllText(Path.Combine(Repo.GitDir.FullName, @"HEAD")).Trim();
+			
 
 			if (!Utility.IsValidSHA(headContents))
 			{ // HEAD content does not contain valid SHA. Will assume format: 'refs: path/to/ref'
-				Branch = new Branch(Repo, headContents.Split(' ').Last().Replace('/', Path.DirectorySeparatorChar).Trim());
+
+				string path = headContents.Split(' ').Last().Replace('/', Path.DirectorySeparatorChar).Trim();
+
+				Branch = Repo.Branches[Path.GetFileName(path)];
 			}
 			else
 			{

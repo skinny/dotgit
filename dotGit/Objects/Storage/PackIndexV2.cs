@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using dotGit.Exceptions;
 using System.IO;
+using dotGit.Generic;
 
 namespace dotGit.Objects.Storage
 {
@@ -160,7 +161,7 @@ namespace dotGit.Objects.Storage
       }
     }
 
-    private int SearchLevelTwo(dotGit.Generic.Sha sha, int index)
+    private int SearchLevelTwo(Sha sha, int index)
     {
       int[] data = shas[index];
 
@@ -190,7 +191,7 @@ namespace dotGit.Objects.Storage
    
 
 
-    public int GetPackFileOffset(dotGit.Generic.Sha sha)
+    public int GetPackFileOffset(Sha sha)
     {
       int levelTwo = SearchLevelTwo(sha, sha.FirstByte);
 

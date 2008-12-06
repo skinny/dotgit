@@ -15,5 +15,10 @@ namespace dotGit.Objects.Storage
 		public GitPackReader(byte[] contents)
 			:base(contents)
 		{		}
+
+		public MemoryStream UncompressToLength(long destLength)
+		{
+			return Zlib.Decompress(this, destLength);
+		}
 	}
 }

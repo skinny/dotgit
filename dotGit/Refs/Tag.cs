@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using dotGit.Objects.Storage;
 using dotGit.Objects;
 using IO = System.IO;
-using dotGit.Objects;
 using dotGit.Exceptions;
 using dotGit.Generic;
 
@@ -17,36 +16,16 @@ namespace dotGit.Refs
 	/// </summary>
 	public class Tag : Ref, IStorableObject
 	{
-		internal Tag(Repository repo)
-			: base(repo)
-		{ }
-
 		internal Tag(Repository repo, string sha)
-			: this(repo)
-		{
-			SHA = sha;
-		}
+			:base(repo, sha)
+		{	}
 
-		/// <summary>
-		/// The SHA this tag is referenced by
-		/// </summary>
-		public string SHA
+		internal static Tag Load(Repository repo, string sha, string path)
 		{
-			get;
-			private set;
-		}
-
-		internal static Tag GetTag(Repository repo, string path)
-		{
-			IO.FileInfo refFile = Ref.GetRefFile(repo, path);
-
-			string sha = IO.File.ReadAllText(refFile.FullName).Trim();
 			if (!Utility.IsValidSHA(sha))
 				throw new ParseException("Tag does not contain valid sha");
 
-
 			IStorableObject obj = repo.Storage.GetObject(sha);
-
 
 			// This is kind of flaky but for now the only way we can distinguish a regular and a lightweight tag
 			if (obj is Tag)
@@ -63,7 +42,6 @@ namespace dotGit.Refs
 			}
 		}
 
-
 		/// <summary>
 		/// The IStorableObject this tag references
 		/// </summary>
@@ -74,7 +52,7 @@ namespace dotGit.Refs
 		}
 
 		/// <summary>
-		/// The contributer that made this tag
+		/// The contributer that created this tag
 		/// </summary>
 		public Contributer Tagger
 		{
@@ -87,6 +65,12 @@ namespace dotGit.Refs
 		/// The date this tag was made
 		/// </summary>
 		public DateTime TagDate
+		{
+			get;
+			private set;
+		}
+
+		public string TaggedObjectSHA
 		{
 			get;
 			private set;
@@ -116,13 +100,9 @@ namespace dotGit.Refs
 		/// <param name="input">A reader with inflated tag contents</param>
 		public void Deserialize(GitObjectReader input)
 		{
-			if (String.IsNullOrEmpty(SHA))
-				SHA = Sha.Compute(input);
-
-
 			string sha;
 			if (Utility.IsValidSHA(input.GetString(20), out sha))
-			{ // Tag contains a regular SHA so we can assume it's a commit
+			{ // Tag contains a regular SHA so we can assume it's an IStorableObject
 				Object = Repo.Storage.GetObject(sha);
 				return;
 			}
@@ -136,13 +116,12 @@ namespace dotGit.Refs
 				// Skip object keyword
 				input.ReadWord();
 
-				string objectSha;
-				objectSha = input.ReadLine().GetString().Trim();
-				if (!Utility.IsValidSHA(objectSha))
+				TaggedObjectSHA = input.ReadLine().GetString().Trim();
+				if (!Utility.IsValidSHA(TaggedObjectSHA))
 					throw new ParseException("Invalid sha from tag content");
 
 				// Load object; a ParseException will be thrown for unknown types
-				Object = Repo.Storage.GetObject(objectSha);
+				Object = Repo.Storage.GetObject(TaggedObjectSHA);
 
 				// Skip type and tag
 				input.ReadLine(); input.ReadLine();
@@ -158,6 +137,11 @@ namespace dotGit.Refs
 				Message = input.ReadToEnd().GetString().TrimEnd();
 
 			}
+		}
+
+		internal override void Deserialize()
+		{
+			throw new NotImplementedException();
 		}
 
 		public byte[] Serialize()

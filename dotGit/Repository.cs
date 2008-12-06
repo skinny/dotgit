@@ -25,6 +25,7 @@ namespace dotGit
 		private ObjectStorage _storage = null;
 		private RefCollection<Branch> _branches = null;
 		private RefCollection<Tag> _tags = null;
+		private PackedRefs _packedRefs = null;
 		private IDX.Index _index = null;
 
 		#endregion
@@ -82,6 +83,11 @@ namespace dotGit
 			return new Repository(newRepositoryPath, true);
 		}
 
+		private void LoadPackedRefs()
+		{
+			_packedRefs = new PackedRefs(this);
+		}
+
 		/// <summary>
 		/// Gets called from the Branches property getter for lazy loading
 		/// </summary>
@@ -93,9 +99,20 @@ namespace dotGit
 
 			try
 			{
+				if (_packedRefs == null)
+					LoadPackedRefs();
+
 				foreach (string file in branches)
 				{
-					_branches.Add(new Branch(this, Path.Combine(@"refs\heads", Path.GetFileName(file))));
+					string sha = File.ReadAllText(file).Trim();
+
+					_branches.Add(new Branch(this, Path.Combine(@"refs\heads", Path.GetFileName(file)), sha));
+				}
+
+				string[] paths = _packedRefs.Keys.Where(path => path.StartsWith("refs/heads")).ToArray();
+				foreach (string path in paths)
+				{
+					_branches.Add(new Branch(this, path, _packedRefs[path]));
 				}
 			}
 			catch (Exception)
@@ -117,20 +134,31 @@ namespace dotGit
 			_tags = new RefCollection<Tag>(tags.Length);
 			try
 			{
+				if (_packedRefs == null)
+					LoadPackedRefs();
+
 				foreach (string file in tags)
 				{
-					_tags.Add(Tag.GetTag(this, Path.Combine(@"refs\tags", Path.GetFileName(file))));
+					string sha = File.ReadAllText(file).Trim();
+
+					_tags.Add(Tag.Load(this, sha, Path.Combine(@"refs\tags", Path.GetFileName(file))));
 				}
+
+				string[] paths = _packedRefs.Keys.Where(path => path.StartsWith("refs/tags")).ToArray();
+				foreach (string path in paths)
+				{
+					_tags.Add(Tag.Load(this, _packedRefs[path], path));
+				}
+
 			}
 			catch (Exception)
-			{ 
+			{
 				// Reset _tags field, otherwise the object would be in an invalid state
 				_tags = null;
 
 				throw;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets called from the Storage property getter for lazy loading
@@ -173,7 +201,6 @@ namespace dotGit
 				return _branches;
 			}
 		}
-
 
 		/// <summary>
 		/// All tags in this repository

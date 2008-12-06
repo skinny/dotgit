@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using dotGit.Exceptions;
+using System.Collections.Specialized;
+using dotGit.Refs;
 
 namespace dotGit.Objects.Storage
 {
@@ -11,8 +13,8 @@ namespace dotGit.Objects.Storage
 	{
 		private static readonly string HEADER = "PACK";
 
-		internal PackV2Pack(string path)
-			:base(path)
+		internal PackV2Pack(Repository repo, string path)
+			:base(repo, path)
 		{
 			VerifyPack();
 		}
@@ -22,65 +24,67 @@ namespace dotGit.Objects.Storage
 			get { return 2; }
 		}
 
-		public override PackObject GetObject(string sha)
+		public override IStorableObject GetObject(string sha)
 		{
 			throw new NotImplementedException();
 		}
 
-		public PackObject GetObjectWithOffset(long offset)
+		public IStorableObject GetObjectWithOffset(string sha, long offset)
 		{
+			if (!Utility.IsValidSHA(sha))
+				throw new ArgumentException("Must have valid sha", "sha");
+
 			using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
 			{
-        string packHeader;
-				int version, numberOfObjects;
+				// Set stream position to offset
+				reader.Position = offset;
+				
+				// Read first byte, it contains the type and 4 bits of object length
+				byte buffer = reader.ReadByte();
+				PackObjectType type = (PackObjectType)buffer.GetBits(1, 3);
+				long size = buffer & 0xf;// >> 4;
 
-				packHeader = reader.ReadBytes(4).GetString();
-				version = reader.ReadBytes(4).Sum(b => b);
-				numberOfObjects = reader.ReadBytes(4).Sum(b => b);
+				// Read byte while 8th bit is 1. 
+				int bitCount = 4;
+				do
+				{
+					buffer = reader.ReadByte();
+
+					size |= (long)(buffer & 0x7f) << bitCount;
+					bitCount += 7;
+
+				} while (buffer >> 7 == 1);
 
 
-        reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-        List<byte> header = new List<byte>();
-
-        while (true)
+				using (MemoryStream inflated = reader.UncompressToLength(size))
         {
+					using(GitObjectReader objectReader = new GitObjectReader(inflated))
+					{
+						objectReader.Rewind();
+						switch (type)
+						{
+							case PackObjectType.OBJ_COMMIT:
+								return ObjectStorage.LoadObjectFromContent<Commit>(Repo, objectReader, sha, size);
 
-          //header.Add((byte)System.Net.IPAddress.HostToNetworkOrder((int)reader.ReadByte()));
-          header.Add(reader.ReadByte());
-          //header.Add((byte)8);
+							case PackObjectType.OBJ_TREE:
+								return ObjectStorage.LoadObjectFromContent<Tree>(Repo, objectReader, sha, size);
 
-          if (header.Last().GetBits(7, 1) == 0)
-            break;
-        }
+							case PackObjectType.OBJ_BLOB:
+								return ObjectStorage.LoadObjectFromContent<Blob>(Repo, objectReader, sha, size);
 
+							case PackObjectType.OBJ_TAG:
+								return ObjectStorage.LoadObjectFromContent<Tag>(Repo, objectReader, sha, size);
 
+							case PackObjectType.OBJ_OFS_DELTA:
+							case PackObjectType.OBJ_REF_DELTE:
+							default:
+								throw new NotImplementedException();
+						}
 
-				//byte[] contents = reader.ReadToNull();
-
-				int type = header[0].GetBits(4, 3);
-        //System.Collections.Specialized.BitVector32 v = new System.Collections.Specialized.BitVector32(header[0].GetBits(0, 4));
-
-        //System.Collections.BitArray ar = new System.Collections.BitArray((byte)header[0].GetBits(0, 4));
-
-        //(14 << 3) + 7
-
-        int size = header[0].GetBits(0,4);
-        for (int idx = header.Count-1; idx > 0 ;  idx--)
-        {
-          size = (header[idx].GetBits(0, 7) << Convert.ToString(size, 2).Length) + size;
-        }
-        
-
-//        int size = (int)Convert.ToByte(s);
-        byte[] contents = reader.ReadBytes(size);
-        using (MemoryStream mStream = Zlib.Decompress(new MemoryStream(contents)))
-        {
-          string result = Encoding.ASCII.GetString(mStream.ToArray());
-          return null;
+						
+					}
         }
 			}
-
-		//	throw new NotImplementedException();
 		}
 
 		private void VerifyPack()

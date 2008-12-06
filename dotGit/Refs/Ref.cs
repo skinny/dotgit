@@ -13,20 +13,23 @@ using dotGit.Generic;
 namespace dotGit.Refs
 {
 	/// <summary>
-	/// Represents a reference to a commit
+	/// Represents a reference to an object
 	/// </summary>
 	public abstract class Ref
 	{
-		private string _path = null;
-		private FileInfo _file = null;
-
-		protected Ref(Repository repo)
+		private Ref(Repository repo)
 		{
 			Repo = repo;
 		}
 
-		protected Ref(Repository repo, string path)
-			: this(repo)
+		protected Ref(Repository repo, string sha)
+			:this(repo)
+		{
+			SHA = sha;
+		}
+
+		protected Ref(Repository repo, string path, string sha)
+			: this(repo, sha)
 		{
 			Path = path;
 		}
@@ -37,20 +40,19 @@ namespace dotGit.Refs
 			private set;
 		}
 
-		/// <summary>
-		/// Relative path to ref file in GITDIR
-		/// </summary>
 		public string Path
 		{
-			get { return _path; }
-			set
-			{
-				if (_path != value)
-				{
-					_path = value;
-					_file = null;
-				}
-			}
+			get;
+			protected set;
+		}
+
+		/// <summary>
+		/// The SHA this tag is referenced by
+		/// </summary>
+		public string SHA
+		{
+			get;
+			private set;
 		}
 
 		/// <summary>
@@ -58,33 +60,10 @@ namespace dotGit.Refs
 		/// </summary>
 		public string Name
 		{
-			get
-			{
-				return File.Name;
-			}
+			get { return IO.Path.GetFileName(Path); }
 		}
 
-		/// <summary>
-		/// The full path to ref's file
-		/// </summary>
-		public FileInfo File
-		{
-			get
-			{
-				if (_file != null) return _file;
-
-				_file = GetRefFile(Repo, Path);
-				
-				return _file;
-			}
-		}
-
-		protected static FileInfo GetRefFile(Repository repo, string path)
-		{
-			if (IO.File.Exists(IO.Path.Combine(repo.GitDir.FullName, path)))
-				return new FileInfo(IO.Path.Combine(repo.GitDir.FullName, path));
-			else
-				throw new FileNotFoundException(String.Format("Could not find ref file '{0}'", path));
-		}
+		internal abstract void Deserialize();
+		
 	}
 }

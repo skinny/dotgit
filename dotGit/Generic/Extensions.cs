@@ -41,18 +41,20 @@ namespace dotGit
 
 		public static int GetBits(this byte b, int offset, int count)
 		{
+			byte buffer = b;
+
 			int result = 0;
 			int pow = 1;
 
-			b >>= offset;
+			buffer >>= offset;
 			for (int i = 0; i < count; ++i)
 			{
-				if (((byte)1 & b) == 1)
+				if (((byte)1 & buffer) == 1)
 				{
 					result += pow;
 				}
 
-				b >>= 1;
+				buffer >>= 1;
 				pow *= 2;
 			}
 
