@@ -42,13 +42,14 @@ namespace dotGit.Generic
 
     public Sha(string sha)
     {
+			SHAString = sha;
 
       int discarded = 0;
       byte[] b = HexEncoding.GetBytes(sha, out discarded);
      
       words = new int[5];
 
-      firstByte = (int)b[0];
+      FirstByte = (int)b[0];
 
       words[0] = System.Net.IPAddress.HostToNetworkOrder(System.BitConverter.ToInt32(b, 0));
       words[1] = System.Net.IPAddress.HostToNetworkOrder(System.BitConverter.ToInt32(b, 4));
@@ -58,14 +59,22 @@ namespace dotGit.Generic
       
     }
 
-    int firstByte;
-    public int FirstByte
-    {
-      get
-      {
-        return firstByte;
-      }
-    }
+		public int FirstByte
+		{
+			get;
+			private set;
+		}
+
+		public string SHAString
+		{
+			get;
+			private set;
+		}
+
+		public override string ToString()
+		{
+			return SHAString;
+		}
 
     internal int CompareTo(int[] data, int idx)
     {

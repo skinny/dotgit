@@ -195,6 +195,10 @@ namespace dotGit.Objects.Storage
     {
       int levelTwo = SearchLevelTwo(sha, sha.FirstByte);
 
+
+			if (levelTwo == -1)
+				throw new ObjectNotFoundException(sha.SHAString);
+
       return System.Net.IPAddress.HostToNetworkOrder(BitConverter.ToInt32(offsets[sha.FirstByte], levelTwo << 2));
 
     }

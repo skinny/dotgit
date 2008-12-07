@@ -6,7 +6,7 @@ using System.Collections;
 using dotGit.Objects;
 using dotGit.Generic;
 
-namespace dotGit.Objects.Storage
+namespace dotGit.Objects.Storage.PackObjects
 {
 	public class PackObjectCollection : InternalWritableList<PackObject>
 	{
