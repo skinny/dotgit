@@ -6,23 +6,15 @@ using dotGit.Generic;
 
 namespace dotGit.Objects.Storage.PackObjects
 {
-	public abstract class PackObject
-	{
+  public abstract class PackObject
+  {
     private PackObject()
     { }
 
-    internal PackObject(string sha, long size, ObjectType type, byte[] content)
+    internal PackObject(long size, ObjectType type)
     {
-      SHA = sha;
       Size = size;
       Type = type;
-      Content = content;
-    }
-
-    public string SHA
-    {
-      get;
-      private set;
     }
 
     public long Size
@@ -36,12 +28,5 @@ namespace dotGit.Objects.Storage.PackObjects
       get;
       private set;
     }
-
-    public byte[] Content
-    {
-      get;
-      private set;
-    }
-
-	}
+  }
 }

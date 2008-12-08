@@ -8,21 +8,28 @@ namespace dotGit.Objects.Storage.PackObjects
 {
   internal class REFDelta : Deltified
 	{
-    internal REFDelta(string sha, long size, ObjectType type, byte[] content)
-      : base(sha, size, type, content)
-    { }
+    internal REFDelta(long size, ObjectType type, GitPackReader reader)
+      : base(size, type, reader)
+    {  }
 
     public override byte[] Delta
     {
-      get { throw new NotImplementedException(); }
+      get;
+      protected set;
     }
 
     public string BaseSHA
     {
-      get
-      {
-        return Content.Take(20).ToArray().GetString();
-      }
+      get;
+      private set;
+    }
+
+    public override void Load(GitPackReader reader)
+    {
+      byte[] shaContents = reader.ReadBytes(20);
+      
+      BaseSHA = Sha.Decode(shaContents);
+      Delta = reader.UncompressToLength(Size).ToArray();
     }
 	}
 }

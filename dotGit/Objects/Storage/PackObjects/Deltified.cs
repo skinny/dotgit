@@ -7,13 +7,18 @@ namespace dotGit.Objects.Storage.PackObjects
 {
   internal abstract class Deltified : PackObject
   {
-    internal Deltified(string sha, long size, ObjectType type, byte[] content)
-      : base(sha, size, type, content)
-    { }
+    internal Deltified(long size, ObjectType type, GitPackReader reader)
+      : base(size, type)
+    {
+      Load(reader);
+    }
 
     public abstract byte[] Delta
     {
       get;
+      protected set;
     }
+
+    public abstract void Load(GitPackReader reader);
   }
 }

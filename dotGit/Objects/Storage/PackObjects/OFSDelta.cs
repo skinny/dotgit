@@ -2,44 +2,49 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace dotGit.Objects.Storage.PackObjects
 {
   internal class OFSDelta : Deltified
   {
-    internal OFSDelta(string sha, long size, ObjectType type, byte[] content)
-      : base(sha, size, type, content)
+    internal OFSDelta(long size, ObjectType type, GitPackReader reader)
+      : base(size, type, reader)
     { }
 
     public override byte[] Delta
     {
-      get { throw new NotImplementedException(); }
+      get;
+      protected set;
     }
 
     public long BackwardsBaseOffset
     {
-      get
+      get;
+      private set;
+    }
+
+    public override void Load(GitPackReader reader)
+    {
+      byte buffer = reader.ReadByte();
+      ObjectType type = (ObjectType)((buffer >> 4) & 7);
+      long baseOffset = buffer & 0xf;
+
+      // Read byte while 8th bit is 1. 
+      do
       {
-        using (GitObjectReader reader = new GitObjectReader(Content))
-        {
-          byte buffer = reader.ReadByte();
-          ObjectType type = (ObjectType)((buffer >> 4) & 7);
-          long baseOffset = buffer & 0xf;
+        buffer = reader.ReadByte();
+        baseOffset += 1;
+        baseOffset <<= 7;
 
-          // Read byte while 8th bit is 1. 
-          do
-          {
-            buffer = reader.ReadByte();
-            baseOffset += 1;
-            baseOffset <<= 7;
+        baseOffset |= ((long)buffer & 0x7f);
 
-            baseOffset |= ((long)buffer & 0x7f);
+      } while (buffer >> 7 == 1);
 
-          } while (buffer >> 7 == 1);
+      Delta = reader.UncompressToLength(Size).ToArray();
 
-          return baseOffset;
-        }
-      }
+
+      BackwardsBaseOffset = baseOffset;
     }
   }
 }

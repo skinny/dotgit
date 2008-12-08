@@ -31,7 +31,7 @@ namespace dotGit.Objects.Storage
       throw new NotImplementedException();
     }
 
-    public PackObject GetObjectWithOffset(string sha, long offset)
+    public PackObject GetObjectWithOffset(long offset)
     {
       using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
       {
@@ -41,7 +41,7 @@ namespace dotGit.Objects.Storage
         // Read first byte, it contains the type and 4 bits of object length
         byte buffer = reader.ReadByte();
         ObjectType type = (ObjectType)((buffer >> 4) & 7);
-        long size = buffer & 0xf;// >> 4;
+        long size = buffer & 0xf;
 
         // Read byte while 8th bit is 1. 
         int bitCount = 4;
@@ -55,19 +55,21 @@ namespace dotGit.Objects.Storage
         } while (buffer >> 7 == 1);
 
 
+
+
         if (type == ObjectType.RefDelta)
         {
-          return new REFDelta(sha, size, type, reader.ReadBytes((int)size));
+          return new REFDelta(size, type, reader);
         }
         else if (type == ObjectType.OFSDelta)
         {
-          return new OFSDelta(sha, size, type, reader.ReadBytes((int)size));
+          return new OFSDelta(size, type, reader);
         }
         else
         {
           using (MemoryStream inflated = reader.UncompressToLength(size))
           {
-            return new Undeltified(sha, size, type, inflated.ToArray());
+            return new Undeltified(size, type, inflated.ToArray());
           }
         }
       }

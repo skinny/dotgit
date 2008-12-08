@@ -39,6 +39,27 @@ namespace dotGit.Objects
 			return output;
 		}
 
+    public static byte[] Decompress(byte[] input)
+    {
+      using (MemoryStream output = new MemoryStream())
+      {
+        using (ZOutputStream zipStream = new ZOutputStream(output))
+        {
+          using (MemoryStream inputStream = new MemoryStream(input))
+          {
+            var buffer = new byte[2000];
+            int len;
+
+            while ((len = inputStream.Read(buffer, 0, 2000)) > 0)
+            {
+              zipStream.Write(buffer, 0, len);
+            }
+          }
+        }
+        return output.ToArray();
+      }
+    }
+
 		public static MemoryStream Decompress(BinaryReader input, long destLength)
 		{
 			int bufferLength = 4;

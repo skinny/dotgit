@@ -51,11 +51,11 @@ namespace dotGit.Objects.Storage
       if (Index != null)
       {
         long packFileOffset = Index.GetPackFileOffset(new Sha(sha));
-        PackObject obj = Pack.GetObjectWithOffset(sha, packFileOffset);
+        PackObject obj = Pack.GetObjectWithOffset(packFileOffset);
 
         if (obj is Undeltified)
         {
-          return ((Undeltified)obj).ToGitObject(Repo);
+          return ((Undeltified)obj).ToGitObject(Repo, sha);
         }
         else if (obj is Deltified)
         {
@@ -65,15 +65,16 @@ namespace dotGit.Objects.Storage
           {
             string baseSha = ((REFDelta)obj).BaseSHA;
             basePackFileOffset = Index.GetPackFileOffset(new Sha(baseSha));
-            baseObject = (Undeltified)Pack.GetObjectWithOffset(baseSha, basePackFileOffset);
+            baseObject = (Undeltified)Pack.GetObjectWithOffset(basePackFileOffset);
           }
           else
           {
             basePackFileOffset = packFileOffset - ((OFSDelta)obj).BackwardsBaseOffset;
-            throw new NotImplementedException();    
+            baseObject = (Undeltified)Pack.GetObjectWithOffset(basePackFileOffset);
           }
 
-          return baseObject + (Deltified)obj;
+          baseObject.ApplyDelta((Deltified)obj);
+          return baseObject.ToGitObject(Repo, sha);
         }
         else
         {

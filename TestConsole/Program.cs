@@ -17,14 +17,16 @@ namespace TestConsole
 	{
 		static void Main(string[] args)
 		{
-			Repository repo = Repository.Open(@"C:\Projects\dotGit");
+			Repository repo = Repository.Open(@"C:\Projects\gitty");
 			Console.WriteLine(repo.Storage);
 			
 			//dotGit.Objects.Storage.Pack.LoadPack(System.IO.Path.Combine(repo.GitDir.FullName, "objects\\pack\\pack-209b24047b294e1d9a97680d62a5b9e1d4bef33c"));
 			
 			//Tag firstTag = repo.Tags["0.1-alpha"];
 			//Branch master = repo.Branches["master"];
-			Console.WriteLine(repo.HEAD.Commit);
+			Console.WriteLine(repo.HEAD.Commit.Tree.Children);
+
+      //IStorableObject obj = repo.Storage.GetObject("bf6ae5d04bcd11d035be3654973ff5339d3f4e1b");
 
 			//Index idx = repo.Index;
 
