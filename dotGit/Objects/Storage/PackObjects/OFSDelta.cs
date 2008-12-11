@@ -27,11 +27,11 @@ namespace dotGit.Objects.Storage.PackObjects
     public override void Load(GitPackReader reader)
     {
       byte buffer = reader.ReadByte();
-      ObjectType type = (ObjectType)((buffer >> 4) & 7);
+      //ObjectType type = (ObjectType)((buffer >> 4) & 7);
       long baseOffset = buffer & 0xf;
 
       // Read byte while 8th bit is 1. 
-      do
+      while ((buffer & 0x80) != 0)
       {
         buffer = reader.ReadByte();
         baseOffset += 1;
@@ -39,10 +39,9 @@ namespace dotGit.Objects.Storage.PackObjects
 
         baseOffset |= ((long)buffer & 0x7f);
 
-      } while (buffer >> 7 == 1);
+      }
 
       Delta = reader.UncompressToLength(Size).ToArray();
-
 
       BackwardsBaseOffset = baseOffset;
     }

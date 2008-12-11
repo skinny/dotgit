@@ -200,7 +200,6 @@ namespace dotGit.Objects.Storage
 				throw new ObjectNotFoundException(sha.SHAString);
 
       return System.Net.IPAddress.HostToNetworkOrder(BitConverter.ToInt32(offsets[sha.FirstByte], levelTwo << 2));
-
     }
 
   }
