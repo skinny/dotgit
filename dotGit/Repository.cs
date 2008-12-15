@@ -52,7 +52,7 @@ namespace dotGit
 				Console.WriteLine(String.Format("Initialized empty git repository in {0}", path));
 			}
 			else
-				throw new RepositoryNotFoundException("'{0}' could not be opened as a git repository");
+				throw new RepositoryNotFoundException("'{0}' could not be opened as a git repository".FormatWith(path));
 		}
 
 		/// <summary>

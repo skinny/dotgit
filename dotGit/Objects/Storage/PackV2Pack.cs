@@ -32,45 +32,38 @@ namespace dotGit.Objects.Storage
       throw new NotImplementedException();
     }
 
-    public PackObject GetObjectWithOffset(long offset)
+    public PackObject GetObjectWithOffset(GitPackReader reader)
     {
-      Debug.WriteLine("Fetching object with offset: {0}".FormatWith(offset));
+      Debug.WriteLine("Fetching object with offset: {0}".FormatWith(reader.Position));
 
-      using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
+      // Read first byte, it contains the type and 4 bits of object length
+      byte buffer = reader.ReadByte();
+      ObjectType type = (ObjectType)((buffer >> 4) & 7);
+      long size = buffer & 0xf;
+
+      // Read byte while 8th bit is 1. 
+      int bitCount = 4;
+      while ((buffer & 0x80) != 0) // >> 7 == 1);
       {
-        // Set stream position to offset
-        reader.Position = offset;
+        buffer = reader.ReadByte();
 
-        // Read first byte, it contains the type and 4 bits of object length
-        byte buffer = reader.ReadByte();
-        ObjectType type = (ObjectType)((buffer >> 4) & 7);
-        long size = buffer & 0xf;
+        size |= ((long)buffer & 0x7f) << bitCount;
+        bitCount += 7;
+      }
 
-        // Read byte while 8th bit is 1. 
-        int bitCount = 4;
-        while ((buffer & 0x80) != 0) // >> 7 == 1);
+      if (type == ObjectType.RefDelta)
+      {
+        return new REFDelta(size, type, reader);
+      }
+      else if (type == ObjectType.OFSDelta)
+      {
+        return new OFSDelta(size, type, reader);
+      }
+      else
+      {
+        using (MemoryStream inflated = reader.UncompressToLength(size))
         {
-          buffer = reader.ReadByte();
-
-          size |= ((long)buffer & 0x7f) << bitCount;
-          bitCount += 7;
-
-        } 
-
-        if (type == ObjectType.RefDelta)
-        {
-          return new REFDelta(size, type, reader);
-        }
-        else if (type == ObjectType.OFSDelta)
-        {
-          return new OFSDelta(size, type, reader);
-        }
-        else
-        {
-          using (MemoryStream inflated = reader.UncompressToLength(size))
-          {
-            return new Undeltified(size, type, inflated.ToArray());
-          }
+          return new Undeltified(size, type, inflated.ToArray());
         }
       }
     }

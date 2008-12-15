@@ -62,7 +62,7 @@ namespace dotGit.Objects
 
 		public static MemoryStream Decompress(BinaryReader input, long destLength)
 		{
-			int bufferLength = 4;
+			int bufferLength = 1;
 
 			MemoryStream output = new MemoryStream();
 			ZOutputStream zipStream = new ZOutputStream(output);

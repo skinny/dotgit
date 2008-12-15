@@ -71,9 +71,6 @@ namespace dotGit.Objects
 
 						FileMode mode = FileMode.FromBits(int.Parse(m));
 
-            
-            
-
 						path = stream.ReadToNull().GetString();
 						sha = Sha.Decode(stream.ReadBytes(20));
 
