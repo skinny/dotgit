@@ -31,7 +31,7 @@ namespace dotGit
 
 		public static long ToLong(this byte[] input)
 		{
-			return BitConverter.ToInt32(input, 0);
+			return BitConverter.ToInt64(input, 0);
 		}
 
 		public static string GetString(this byte[] input)

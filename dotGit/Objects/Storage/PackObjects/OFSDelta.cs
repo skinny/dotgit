@@ -26,9 +26,9 @@ namespace dotGit.Objects.Storage.PackObjects
 
     public override void Load(GitPackReader reader)
     {
+
       byte buffer = reader.ReadByte();
-      //ObjectType type = (ObjectType)((buffer >> 4) & 7);
-      long baseOffset = buffer & 0xf;
+      long baseOffset = buffer & 0x7f;
 
       // Read byte while 8th bit is 1. 
       while ((buffer & 0x80) != 0)

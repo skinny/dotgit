@@ -13,6 +13,12 @@ namespace dotGit.Exceptions
 			PackFile = packFile;
 		}
 
+    public PackFileException(string message, string packFile, Exception innerException)
+      :base(message, innerException)
+    {
+      PackFile = packFile;
+    }
+
 		public string PackFile
 		{
 			get;

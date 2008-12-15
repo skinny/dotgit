@@ -7,6 +7,7 @@ using dotGit.Exceptions;
 using System.Collections.Specialized;
 using dotGit.Refs;
 using dotGit.Objects.Storage.PackObjects;
+using System.Diagnostics;
 
 namespace dotGit.Objects.Storage
 {
@@ -33,6 +34,8 @@ namespace dotGit.Objects.Storage
 
     public PackObject GetObjectWithOffset(long offset)
     {
+      Debug.WriteLine("Fetching object with offset: {0}".FormatWith(offset));
+
       using (GitPackReader reader = new GitPackReader(File.OpenRead(Path)))
       {
         // Set stream position to offset
@@ -45,17 +48,14 @@ namespace dotGit.Objects.Storage
 
         // Read byte while 8th bit is 1. 
         int bitCount = 4;
-        do
+        while ((buffer & 0x80) != 0) // >> 7 == 1);
         {
           buffer = reader.ReadByte();
 
           size |= ((long)buffer & 0x7f) << bitCount;
           bitCount += 7;
 
-        } while (buffer >> 7 == 1);
-
-
-
+        } 
 
         if (type == ObjectType.RefDelta)
         {

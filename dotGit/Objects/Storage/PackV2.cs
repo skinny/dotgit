@@ -6,6 +6,7 @@ using System.IO;
 using dotGit.Exceptions;
 using dotGit.Generic;
 using dotGit.Objects.Storage.PackObjects;
+using System.Diagnostics;
 
 
 namespace dotGit.Objects.Storage
@@ -48,42 +49,61 @@ namespace dotGit.Objects.Storage
 
     public override IStorableObject GetObject(string sha)
     {
-      if (Index != null)
+      try
       {
-        long packFileOffset = Index.GetPackFileOffset(new Sha(sha));
-        PackObject obj = Pack.GetObjectWithOffset(packFileOffset);
+        if (Index != null)
+        {
+          long packFileOffset = Index.GetPackFileOffset(new Sha(sha));
+          Debug.WriteLine("Fetching object with sha: {0}".FormatWith(sha));
+          PackObject obj = Pack.GetObjectWithOffset(packFileOffset);
 
-        if (obj is Undeltified)
-        {
-          return ((Undeltified)obj).ToGitObject(Repo, sha);
-        }
-        else if (obj is Deltified)
-        {
-          long basePackFileOffset;
-          Undeltified baseObject;
-          if (obj is REFDelta)
+          if (obj is Undeltified)
           {
-            string baseSha = ((REFDelta)obj).BaseSHA;
-            basePackFileOffset = Index.GetPackFileOffset(new Sha(baseSha));
-            baseObject = (Undeltified)Pack.GetObjectWithOffset(basePackFileOffset);
+            return ((Undeltified)obj).ToGitObject(Repo, sha);
+          }
+          else if (obj is Deltified)
+          {
+            List<Deltified> deltas = new List<Deltified>();
+            deltas.Add((Deltified)obj);
+            while (obj is Deltified)
+            {
+              if (obj is REFDelta)
+              {
+                string baseSha = ((REFDelta)obj).BaseSHA;
+                packFileOffset = Index.GetPackFileOffset(new Sha(baseSha));
+              }
+              else
+              {
+                packFileOffset -= ((OFSDelta)obj).BackwardsBaseOffset;
+              }
+
+              obj = Pack.GetObjectWithOffset(packFileOffset);
+
+              if (obj is Deltified)
+                deltas.Add((Deltified)obj);
+            }
+
+            for (int i = deltas.Count - 1; i >= 0; i--)
+            {
+              ((Undeltified)obj).ApplyDelta(deltas[i]);
+            }
+
+
+            return ((Undeltified)obj).ToGitObject(Repo, sha);
           }
           else
           {
-            basePackFileOffset = packFileOffset - ((OFSDelta)obj).BackwardsBaseOffset;
-            baseObject = (Undeltified)Pack.GetObjectWithOffset(basePackFileOffset);
+            throw new ApplicationException("Don't know what to do with: {0}".FormatWith(obj.GetType().FullName));
           }
-
-          baseObject.ApplyDelta((Deltified)obj);
-          return baseObject.ToGitObject(Repo, sha);
         }
         else
         {
-          throw new ApplicationException("Don't know what to do with: {0}".FormatWith(obj.GetType().FullName));
+          return Pack.GetObject(sha);
         }
       }
-      else
+      catch (Exception ex)
       {
-        return Pack.GetObject(sha);
+        throw new PackFileException("Something went wrong while fetching object: {0}".FormatWith(sha), PackFilePath, ex);
       }
     }
   }
