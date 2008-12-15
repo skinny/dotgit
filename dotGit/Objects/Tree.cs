@@ -64,15 +64,26 @@ namespace dotGit.Objects
 				{
 					while (!stream.IsEndOfStream)
 					{
-						string mode, path, sha;
+						string path, sha;
 
-						mode = stream.ReadWord().GetString();
+            // TODO: Make this a little bit less sucky
+            string m = stream.ReadWord().GetString();
+
+						FileMode mode = FileMode.FromBits(int.Parse(m));
+
+            
+            
+
 						path = stream.ReadToNull().GetString();
 						sha = Sha.Decode(stream.ReadBytes(20));
 
+            // TODO: Add support for submodules
+            if (mode.ObjectType != ObjectType.Tree && mode.ObjectType != ObjectType.Blob)
+              continue;
+
 						TreeNode child = Repo.Storage.GetObject<TreeNode>(sha);
 						child.Path = path;
-						child.Mode = FileMode.FromBits(int.Parse(mode));
+            child.Mode = mode;
 						child.Parent = this;
 
 						_children.Add(child);
