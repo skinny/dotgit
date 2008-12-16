@@ -223,9 +223,7 @@ namespace dotGit.Objects
 				if (timeZoneIndex >= 0)
 				{
 					remainder = input.Substring(0, match.Index);
-
-					//Kind of nasty, but for now the only way I know of to parse the seconds offset Unix EPOCH with timezone offset
-					return DateTime.Parse(UnixEPOCH.AddSeconds(long.Parse(capture.Substring(0, timeZoneIndex))).ToString(CultureInfo.CurrentCulture) + " " + capture.Substring(timeZoneIndex), CultureInfo.CurrentCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal);			
+          return UnixEPOCH.AddSeconds(long.Parse(capture.Substring(0, timeZoneIndex))).AddHours(System.Int32.Parse(capture.Substring(timeZoneIndex)) / 100);
 				}
 			}
 			remainder = input;
